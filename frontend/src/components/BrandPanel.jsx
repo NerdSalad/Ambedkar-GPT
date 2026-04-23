@@ -49,7 +49,7 @@ function FramedImage({ src, label, variant = 'login' }) {
   const isSignup = variant === 'signup';
 
   return (
-    <div className="relative mx-auto w-full max-w-[440px]">
+    <div className="relative mx-auto w-full max-w-[520px]">
       {/* ambient glow behind the frame */}
       <div className="pointer-events-none absolute -inset-8 rounded-[30px] bg-[radial-gradient(circle,rgba(95,140,255,0.22)_0%,transparent_70%)] blur-xl" />
 
@@ -97,7 +97,7 @@ export default function BrandPanel({ variant = 'login' }) {
   const label = isSignup ? 'Ambedkar Statue' : 'Ambedkar Portrait';
 
   return (
-    <div className="relative flex h-full flex-col px-8 pt-10 pb-10 md:px-10 md:pt-12 md:pb-12">
+    <div className="relative flex h-full flex-col px-6 pt-10 pb-10 md:px-8 md:pt-12 md:pb-12">
       <div className="flex justify-center md:justify-start">
         <BrandLogo />
       </div>

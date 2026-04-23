@@ -15,7 +15,7 @@ function FeatureChip({ icon: Icon, children }) {
 // Poster frame — image inside a dark glass card with optional wordmark overlay
 function PosterFrame({ image, alt, banner, showBanner }) {
   return (
-    <div className="relative mx-auto w-full max-w-[420px]">
+    <div className="relative mx-auto w-full max-w-[500px]">
       {/* ambient glow behind the frame */}
       <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[28px] bg-[radial-gradient(circle,rgba(63,120,255,0.22)_0%,transparent_70%)] blur-2xl" />
 
@@ -103,7 +103,7 @@ export default function MissionStatement({
 
   return (
     <section className="relative py-20 md:py-28">
-      <div className="mx-auto grid max-w-[1100px] items-center gap-12 px-6 md:grid-cols-2 md:gap-16">
+      <div className="mx-auto grid max-w-[1180px] items-center gap-12 px-6 md:grid-cols-2 md:gap-20">
         {imageFirst ? (
           <>
             {imageBlock}

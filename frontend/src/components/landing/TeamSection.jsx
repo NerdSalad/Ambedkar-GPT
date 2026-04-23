@@ -1,5 +1,6 @@
 import { LinkedinIcon, TwitterIcon } from './SocialIcons';
 import SectionLabel from './SectionLabel';
+import teamGroupImg from '../../assets/images/team-group.png';
 
 const TEAM = [
   { name: 'Yuvraj Singh Kane',  role: 'Founder & CEO',       initials: 'YK' },
@@ -66,22 +67,16 @@ export default function TeamSection() {
           before
         </h2>
 
-        {/* Group hero panel */}
-        <div className="relative mx-auto mt-10 h-[240px] w-full overflow-hidden rounded-2xl border border-[#2a4375]/60 bg-gradient-to-br from-[#0d1a3f] via-[#0a1430] to-[#06102b] shadow-[0_20px_60px_rgba(0,0,0,0.5)] md:h-[300px]">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex items-end gap-4 opacity-70">
-              {['YK','TB','NY','AD'].map((i, idx) => (
-                <div
-                  key={i}
-                  className="flex h-32 w-24 items-center justify-center rounded-xl bg-gradient-to-b from-[#1a2a55] to-[#0a1330] font-display text-3xl font-bold text-white/30 md:h-40 md:w-28"
-                  style={{ transform: `translateY(${idx % 2 === 0 ? 0 : -12}px)` }}
-                >
-                  {i}
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#030611] via-transparent to-transparent" />
+        {/* Group hero panel — real team photo with a dark gradient overlay
+            so the headline + CTA below read clearly against it */}
+        <div className="relative mx-auto mt-10 aspect-[21/9] w-full overflow-hidden rounded-2xl border border-[#2a4375]/60 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+          <img
+            src={teamGroupImg}
+            alt="The AmbedkarGPT founding team collaborating"
+            className="h-full w-full object-cover object-center"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#030611] via-[#030611]/30 to-transparent" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_100%,rgba(10,20,48,0.55),transparent_60%)]" />
         </div>
 
         <p className="mx-auto mt-8 max-w-[720px] text-center text-[14.5px] leading-7 text-[#a6b9d6]">
