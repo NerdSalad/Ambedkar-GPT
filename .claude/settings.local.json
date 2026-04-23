@@ -11,7 +11,13 @@
       "Bash(curl -s http://127.0.0.1:5180/signup -o /dev/null -w \"status=%{http_code}\\\\n\")",
       "Bash(kill 1532263)",
       "Bash(pkill -f \"node.*vite\")",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(curl -s http://127.0.0.1:5181/ -o /dev/null -w \"/:%{http_code} \")",
+      "Bash(curl -s http://127.0.0.1:5181/login -o /dev/null -w \"/login:%{http_code} \")",
+      "Bash(curl -s http://127.0.0.1:5181/signup -o /dev/null -w \"/signup:%{http_code}\\\\n\")",
+      "Bash(pkill -f \"vite --host 127.0.0.1 --port 5181\")"
     ]
   }
 }

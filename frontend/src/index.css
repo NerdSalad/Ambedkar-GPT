@@ -190,6 +190,40 @@ html { scroll-behavior: smooth; }
   animation: shimmer 4s linear infinite;
 }
 
+/* --- Infinite horizontal marquee ---
+   Duplicate the track twice and translate -50% so the seam is invisible.
+   Pause on hover via `.marquee-track:hover`. */
+.marquee {
+  overflow: hidden;
+  position: relative;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+.marquee-track {
+  display: flex;
+  gap: 1.25rem;
+  width: max-content;
+  animation: marqueeSlide var(--marquee-duration, 40s) linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+@keyframes marqueeSlide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
 /* --- Scrollbar (subtle) --- */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: #050814; }

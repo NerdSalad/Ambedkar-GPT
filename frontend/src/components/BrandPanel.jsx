@@ -7,26 +7,33 @@ const imageModules = import.meta.glob('../assets/images/*.{jpg,jpeg,png,webp}', 
 });
 const portraitSrc = imageModules['../assets/images/ambedkar-portrait.png']?.default ?? null;
 const statueSrc   = imageModules['../assets/images/ambedkar-statue.png']?.default ?? null;
+const logoSrc     = imageModules['../assets/images/logo-animation.png']?.default ?? null;
 
-// Radar-ring logo mark — matches the Logo Animation reference
-function LogoMark({ size = 38 }) {
+// Radar-ring logo image sourced from the design asset
+function LogoMark({ size = 44 }) {
   return (
     <span
-      className="relative flex items-center justify-center rounded-full border border-[#3f6bd4]/60 bg-[#0b1430] shadow-[0_0_22px_rgba(63,159,255,0.45)]"
+      className="relative flex items-center justify-center"
       style={{ width: size, height: size }}
     >
-      <span className="absolute rounded-full border border-[#3f6bd4]/40" style={{ inset: 4 }} />
-      <span className="absolute rounded-full border border-[#3f6bd4]/30" style={{ inset: 8 }} />
-      <span className="h-1.5 w-1.5 rounded-full bg-[#3f9fff] shadow-[0_0_12px_rgba(63,159,255,1)]" />
+      {logoSrc ? (
+        <img
+          src={logoSrc}
+          alt="AmbedkarGPT"
+          className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(63,159,255,0.55)]"
+        />
+      ) : (
+        <span className="h-3 w-3 rounded-full bg-[#3f9fff]" />
+      )}
     </span>
   );
 }
 
 function BrandLogo() {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2.5">
       <LogoMark />
-      <span className="text-[26px] font-semibold leading-none tracking-tight md:text-[28px]">
+      <span className="text-[26px] font-semibold leading-none tracking-tight md:text-[30px]">
         <span className="text-white">Ambedkar</span>
         <span className="ml-1 gradient-text-cyan">GPT</span>
       </span>

@@ -2,13 +2,13 @@ import { useEffect } from 'react';
 import MainLayout from '../layouts/MainLayout';
 import RevealOnScroll from '../components/ui/RevealOnScroll';
 
-import HeroSection        from '../components/landing/HeroSection';
-import TrustedByStrip     from '../components/landing/TrustedByStrip';
-import MissionStatement   from '../components/landing/MissionStatement';
-import UseCasesGrid       from '../components/landing/UseCasesGrid';
-import PillarsCarousel    from '../components/landing/PillarsCarousel';
-import DalitCorpusSection from '../components/landing/DalitCorpusSection';
-import TeamSection        from '../components/landing/TeamSection';
+import HeroSection         from '../components/landing/HeroSection';
+import TrustedByStrip      from '../components/landing/TrustedByStrip';
+import MissionStatement    from '../components/landing/MissionStatement';
+import UseCasesGrid        from '../components/landing/UseCasesGrid';
+import DalitHistoryMakers  from '../components/landing/DalitHistoryMakers';
+import DalitCorpusSection  from '../components/landing/DalitCorpusSection';
+import TeamSection         from '../components/landing/TeamSection';
 
 import ambedkarPortrait from '../assets/images/ambedkar-portrait.png';
 
@@ -27,7 +27,6 @@ export default function Home() {
 
   return (
     <MainLayout>
-      {/* Hero occupies full bleed — no outer container padding */}
       <HeroSection />
 
       <RevealOnScroll>
@@ -46,22 +45,11 @@ export default function Home() {
       </RevealOnScroll>
 
       <RevealOnScroll delayMs={60}>
-        <MissionStatement
-          label="VISION STATEMENT"
-          titlePrimary="AI-Powered Dalit"
-          titleAccent="Literature Archive"
-          description="We envision creating the Indian Dalit Literature Corpus (IDLC) — the world's first comprehensive digital archive dedicated to preserving and amplifying Dalit literature. By leveraging AI, we transform fragmented and inaccessible works into a structured, searchable, and enduring knowledge system."
-          imageLabel="IDLC"
-          imageFirst
-        />
-      </RevealOnScroll>
-
-      <RevealOnScroll delayMs={60}>
         <UseCasesGrid />
       </RevealOnScroll>
 
       <RevealOnScroll delayMs={60}>
-        <PillarsCarousel />
+        <DalitHistoryMakers />
       </RevealOnScroll>
 
       <RevealOnScroll delayMs={60}>

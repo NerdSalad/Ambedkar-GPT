@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { TwitterIcon, LinkedinIcon, InstagramIcon, YoutubeIcon } from './landing/SocialIcons';
+import logoSrc from '../assets/images/logo-animation.png';
 
 const SOCIALS = [
   { icon: TwitterIcon,   href: '#', label: 'Twitter' },
@@ -25,10 +26,11 @@ export default function Footer() {
           {/* Brand block */}
           <div>
             <Link to="/" className="flex items-center gap-2">
-              <span className="relative flex h-9 w-9 items-center justify-center rounded-full border border-[#3f6bd4]/60 bg-[#0b1430] shadow-[0_0_18px_rgba(63,159,255,0.35)]">
-                <span className="absolute inset-1 rounded-full border border-[#3f6bd4]/40" />
-                <span className="h-1.5 w-1.5 rounded-full bg-[#3f9fff]" />
-              </span>
+              <img
+                src={logoSrc}
+                alt="AmbedkarGPT"
+                className="h-10 w-10 object-contain drop-shadow-[0_0_14px_rgba(63,159,255,0.4)]"
+              />
               <span className="text-[26px] font-semibold leading-none tracking-tight">
                 <span className="text-white">Amb</span>
                 <span className="ml-0.5 gradient-text-cyan">AI</span>

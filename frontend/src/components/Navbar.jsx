@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import logoSrc from '../assets/images/logo-animation.png';
 
 const navItems = [
   { label: 'HOME',          sectionId: 'home' },
@@ -45,10 +46,11 @@ export default function Navbar() {
       <div className="mx-auto flex h-[78px] w-full max-w-[1440px] items-center justify-between px-6 md:h-[88px] md:px-12">
         {/* ── Logo ─────────────────────────────── */}
         <Link to="/" className="flex items-center gap-2 group">
-          <span className="relative flex h-9 w-9 items-center justify-center rounded-full border border-[#3f6bd4]/60 bg-[#0b1430] shadow-[0_0_18px_rgba(63,159,255,0.35)]">
-            <span className="absolute inset-1 rounded-full border border-[#3f6bd4]/40" />
-            <span className="h-1.5 w-1.5 rounded-full bg-[#3f9fff] shadow-[0_0_10px_rgba(63,159,255,0.9)]" />
-          </span>
+          <img
+            src={logoSrc}
+            alt="AmbedkarGPT"
+            className="h-10 w-10 object-contain drop-shadow-[0_0_14px_rgba(63,159,255,0.5)]"
+          />
           <span className="text-[26px] font-semibold leading-none tracking-tight md:text-[30px]">
             <span className="text-white">Amb</span>
             <span className="ml-0.5 gradient-text-cyan">AI</span>
