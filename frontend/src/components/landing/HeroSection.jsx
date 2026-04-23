@@ -1,6 +1,58 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Play, ArrowRight, Home as HomeIcon, LayoutGrid, Shield, Zap } from 'lucide-react';
 import Sparkle from './Sparkle';
+import CountUp from './CountUp';
+
+// Words that cycle through the accent slot in the hero headline
+const ROTATING_WORDS = ['Knowledge.', 'Truth.', 'Equality.', 'Justice.', 'Inclusion.'];
+
+function RotatingWord({ words, intervalMs = 2600 }) {
+  const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
+  // Pre-measure max word so the headline doesn't jump
+  const widest = useMemo(
+    () => words.reduce((acc, w) => (w.length > acc.length ? w : acc), ''),
+    [words]
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+    const t = setInterval(() => {
+      setVisible(false);
+      // swap word mid-fade so the crossfade reads clean
+      const swap = setTimeout(() => {
+        setIndex((i) => (i + 1) % words.length);
+        setVisible(true);
+      }, 220);
+      return () => clearTimeout(swap);
+    }, intervalMs);
+    return () => clearInterval(t);
+  }, [words.length, intervalMs]);
+
+  return (
+    <span className="relative inline-block align-baseline">
+      {/* ghost word reserves the widest width so the line never jumps */}
+      <span
+        aria-hidden="true"
+        className="invisible font-display italic font-semibold"
+      >
+        {widest}
+      </span>
+      <span
+        className="absolute inset-0 font-display italic font-semibold gradient-text-cyan transition-all duration-300 ease-out"
+        style={{
+          opacity: visible ? 1 : 0,
+          transform: visible ? 'translateY(0) scale(1)' : 'translateY(10px) scale(0.97)',
+          filter: visible ? 'blur(0)' : 'blur(6px)',
+        }}
+      >
+        {words[index]}
+      </span>
+    </span>
+  );
+}
 
 // Floating decorative icon with soft-blue glass badge look
 function FloatIcon({ icon: Icon, className = '', delayed = false }) {
@@ -69,12 +121,10 @@ export default function HeroSection() {
           Trusted by AI Power Users Worldwide
         </div>
 
-        {/* Headline — serif italic gradient on "Knowledge" and "AI" */}
+        {/* Headline — accent word rotates through Knowledge/Truth/Equality/… */}
         <h1 className="max-w-[1040px] text-[42px] font-semibold leading-[1.05] tracking-tight text-white md:text-[72px] md:leading-[1.04]">
           Empower Through{' '}
-          <span className="font-display italic font-semibold gradient-text-cyan">
-            Knowledge.
-          </span>
+          <RotatingWord words={ROTATING_WORDS} />
           <br />
           Scale with Intelligent{' '}
           <span className="font-display italic font-semibold gradient-text-cyan">
@@ -111,17 +161,22 @@ export default function HeroSection() {
 
         {/* Bottom row: stats + AI Tools badge */}
         <div className="mt-14 w-full md:mt-20 md:grid md:grid-cols-[1fr_auto_1fr] md:items-end md:gap-8">
-          {/* Stats (left) */}
+          {/* Stats (left) — count up from 0 when the hero enters view */}
           <div className="flex items-start gap-10 md:gap-12">
             <div className="text-left">
               <p className="text-[36px] font-semibold leading-none text-[#3f9fff] md:text-[44px]">
-                4.8<span className="text-[#3f9fff]/80">+</span>
+                <CountUp end={4.8} decimals={1} />
+                <span className="text-[#3f9fff]/80">+</span>
               </p>
               <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#90a8cc]">Stars Rating</p>
             </div>
             <div className="text-left">
               <p className="text-[36px] font-semibold leading-none text-[#3f9fff] md:text-[44px]">
-                24k<span className="text-[#3f9fff]/80">+</span>
+                <CountUp
+                  end={24}
+                  format={(v) => `${Math.round(v)}k`}
+                />
+                <span className="text-[#3f9fff]/80">+</span>
               </p>
               <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#90a8cc]">
                 Satisfied Customer

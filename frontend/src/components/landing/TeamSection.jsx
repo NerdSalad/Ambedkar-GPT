@@ -1,5 +1,6 @@
 import { LinkedinIcon, TwitterIcon } from './SocialIcons';
 import SectionLabel from './SectionLabel';
+import StaggerReveal from '../ui/StaggerReveal';
 import teamGroupImg from '../../assets/images/team-group.png';
 
 const TEAM = [
@@ -84,12 +85,15 @@ export default function TeamSection() {
           turning knowledge into meaningful action.
         </p>
 
-        {/* Cards */}
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Cards — stagger reveal */}
+        <StaggerReveal
+          step={110}
+          className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {TEAM.map((m) => (
             <TeamCard key={m.name} member={m} />
           ))}
-        </div>
+        </StaggerReveal>
       </div>
     </section>
   );

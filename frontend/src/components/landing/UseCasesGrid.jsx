@@ -1,5 +1,6 @@
 import { GraduationCap, Sparkles, Megaphone, Database } from 'lucide-react';
 import SectionLabel from './SectionLabel';
+import StaggerReveal from '../ui/StaggerReveal';
 
 const USE_CASES = [
   {
@@ -67,11 +68,14 @@ export default function UseCasesGrid() {
           actionable understanding.
         </p>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2">
+        <StaggerReveal
+          step={100}
+          className="mt-14 grid gap-6 md:grid-cols-2"
+        >
           {USE_CASES.map((uc) => (
             <UseCaseCard key={uc.title} {...uc} />
           ))}
-        </div>
+        </StaggerReveal>
       </div>
     </section>
   );

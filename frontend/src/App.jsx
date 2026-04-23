@@ -9,10 +9,12 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Otp from './pages/Otp';
 import CustomCursor from './components/CustomCursor';
+import ScrollProgress from './components/ScrollProgress';
 
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollProgress />
       <CustomCursor />
       <Routes>
         <Route path="/"       element={<Home />} />

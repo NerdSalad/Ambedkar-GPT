@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Calendar, MapPin, FileText, Eye } from 'lucide-react';
 import SectionLabel from './SectionLabel';
+import StaggerReveal from '../ui/StaggerReveal';
 
 const RECORDS = [
   {
@@ -146,13 +147,15 @@ export default function DalitCorpusSection() {
               </div>
             </div>
 
-            {/* Right: Records */}
-            <div className="space-y-4">
-              {RECORDS.map((r) => (
-                <RecordRow key={r.num} record={r} />
-              ))}
+            {/* Right: Records — stagger reveal */}
+            <div>
+              <StaggerReveal step={130} className="space-y-4">
+                {RECORDS.map((r) => (
+                  <RecordRow key={r.num} record={r} />
+                ))}
+              </StaggerReveal>
 
-              <div className="pt-2 text-center">
+              <div className="pt-6 text-center">
                 <button className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#7aa6e5] transition hover:text-white">
                   Load More Records
                 </button>

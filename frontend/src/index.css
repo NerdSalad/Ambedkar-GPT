@@ -74,6 +74,15 @@ html { scroll-behavior: smooth; }
   50%     { opacity: 1;    filter: drop-shadow(0 0 14px rgba(79,167,255,0.45)); }
 }
 @keyframes spinSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes sparkleTwinkle {
+  0%, 100% { transform: rotate(0deg)   scale(1);   opacity: 0.85; }
+  50%      { transform: rotate(180deg) scale(1.18); opacity: 1;   }
+}
+.sparkle-twinkle        { animation: sparkleTwinkle 4.2s ease-in-out infinite;         transform-origin: center; }
+.sparkle-twinkle-delay  { animation: sparkleTwinkle 4.2s ease-in-out infinite -2.1s;   transform-origin: center; }
+@media (prefers-reduced-motion: reduce) {
+  .sparkle-twinkle, .sparkle-twinkle-delay { animation: none; }
+}
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -87,16 +96,44 @@ html { scroll-behavior: smooth; }
   background-clip: text;
 }
 .gradient-text-blue {
-  background: linear-gradient(90deg, #c9dcff 0%, #6aa8ff 50%, #2f7fff 100%);
+  background: linear-gradient(
+    100deg,
+    #c9dcff 0%,
+    #6aa8ff 30%,
+    #ffffff 50%,
+    #6aa8ff 70%,
+    #2f7fff 100%
+  );
+  background-size: 220% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: accentShimmer 7s linear infinite;
 }
 .gradient-text-cyan {
-  background: linear-gradient(90deg, #9cd6ff 0%, #3f9fff 50%, #2563eb 100%);
+  background: linear-gradient(
+    100deg,
+    #9cd6ff 0%,
+    #3f9fff 30%,
+    #e6f1ff 50%,
+    #3f9fff 70%,
+    #2563eb 100%
+  );
+  background-size: 220% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: accentShimmer 8s linear infinite;
+}
+
+@keyframes accentShimmer {
+  0%   { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gradient-text-blue,
+  .gradient-text-cyan { animation: none; }
 }
 
 /* --- Buttons --- */
@@ -262,6 +299,11 @@ html { scroll-behavior: smooth; }
   width: 24px;
   height: 24px;
   background: rgba(63, 159, 255, 0.2);
+}
+.custom-cursor--trail {
+  border-radius: 9999px;
+  background: #5fa8ff;
+  box-shadow: 0 0 6px rgba(95, 168, 255, 0.55);
 }
 .custom-cursor--dot.cursor--active {
   transform-origin: center;
