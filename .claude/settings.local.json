@@ -17,7 +17,9 @@
       "Bash(curl -s http://127.0.0.1:5181/ -o /dev/null -w \"/:%{http_code} \")",
       "Bash(curl -s http://127.0.0.1:5181/login -o /dev/null -w \"/login:%{http_code} \")",
       "Bash(curl -s http://127.0.0.1:5181/signup -o /dev/null -w \"/signup:%{http_code}\\\\n\")",
-      "Bash(pkill -f \"vite --host 127.0.0.1 --port 5181\")"
+      "Bash(pkill -f \"vite --host 127.0.0.1 --port 5181\")",
+      "Bash(git ls-remote *)",
+      "Bash(git pull *)"
     ]
   }
 }

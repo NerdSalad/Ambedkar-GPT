@@ -9,6 +9,7 @@ import UseCasesGrid        from '../components/landing/UseCasesGrid';
 import DalitHistoryMakers  from '../components/landing/DalitHistoryMakers';
 import DalitCorpusSection  from '../components/landing/DalitCorpusSection';
 import TeamSection         from '../components/landing/TeamSection';
+import ContactSection      from '../components/landing/ContactSection';
 
 import ambedkarPortrait from '../assets/images/ambedkar-portrait.png';
 
@@ -58,6 +59,10 @@ export default function Home() {
 
       <RevealOnScroll delayMs={60}>
         <TeamSection />
+      </RevealOnScroll>
+
+      <RevealOnScroll delayMs={60}>
+        <ContactSection />
       </RevealOnScroll>
     </MainLayout>
   );
