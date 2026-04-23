@@ -33,10 +33,12 @@ export default function Login() {
 
   return (
     <AuthLayout brandSide="right" brandVariant="login">
-      <div className="space-y-5">
+      <div className="space-y-6">
         <div>
-          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-white">Welcome Back</h1>
-          <p className="mt-2 text-base" style={{ color: '#8b94b8' }}>
+          <h1 className="font-display text-[44px] font-bold leading-tight tracking-tight text-white md:text-[52px]">
+            Welcome Back
+          </h1>
+          <p className="mt-3 text-[14px]" style={{ color: '#8b94b8' }}>
             Login to continue your journey of knowledge!
           </p>
         </div>

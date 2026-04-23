@@ -1,7 +1,17 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm create *)"
+      "Bash(npm create *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(echo \"pid=$!\")",
+      "Read(//tmp/**)",
+      "Bash(curl -s http://127.0.0.1:5180/ -o /dev/null -w \"status=%{http_code}\\\\n\")",
+      "Bash(curl -s http://127.0.0.1:5180/login -o /dev/null -w \"status=%{http_code}\\\\n\")",
+      "Bash(curl -s http://127.0.0.1:5180/signup -o /dev/null -w \"status=%{http_code}\\\\n\")",
+      "Bash(kill 1532263)",
+      "Bash(pkill -f \"node.*vite\")",
+      "Bash(git add *)"
     ]
   }
 }

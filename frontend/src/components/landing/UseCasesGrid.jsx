@@ -1,0 +1,78 @@
+import { GraduationCap, Sparkles, Megaphone, Database } from 'lucide-react';
+import SectionLabel from './SectionLabel';
+
+const USE_CASES = [
+  {
+    icon: GraduationCap,
+    title: 'Academics, Scholars, Journalists',
+    body:  'Find authentic citations, arguments, and context for accurate research.',
+  },
+  {
+    icon: Sparkles,
+    title: 'Creators, Influencers & Artists',
+    body:  'Inspire authentic, impactful content with Ambedkar’s powerful, original words.',
+  },
+  {
+    icon: Megaphone,
+    title: 'Activists & Advocates',
+    body:  'Empower advocacy campaigns with Ambedkar’s compelling arguments.',
+  },
+  {
+    icon: Database,
+    title: 'Data Scientists, NLP Engineers',
+    body:  'Train next-gen AI with authentic, unparalleled data on social justice.',
+  },
+];
+
+function UseCaseCard({ icon: Icon, title, body }) {
+  return (
+    <div className="group glass-card hover-lift relative overflow-hidden p-7 md:p-8">
+      {/* corner glow accent */}
+      <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-[#3f9fff]/15 blur-3xl" />
+
+      <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#2a4375]/80 bg-[#0c1735]/80 text-[#5fa5ff] shadow-[0_0_22px_rgba(63,159,255,0.25)]">
+        <Icon size={19} strokeWidth={1.8} />
+      </span>
+
+      <h3 className="mt-6 text-[20px] font-semibold text-white md:text-[22px]">
+        {title}
+      </h3>
+      <p className="mt-3 max-w-[420px] text-[14px] leading-relaxed text-[#a6b9d6]">
+        {body}
+      </p>
+    </div>
+  );
+}
+
+// Use Cases — centered title with gradient-accent words, 2×2 feature grid
+export default function UseCasesGrid() {
+  return (
+    <section id="bheem" className="relative py-20 md:py-28">
+      <div className="pointer-events-none absolute inset-x-0 top-10 mx-auto h-64 max-w-4xl bg-[radial-gradient(circle_at_center,rgba(63,120,255,0.18),transparent_70%)]" />
+
+      <div className="relative mx-auto max-w-[1180px] px-6">
+        <SectionLabel>Use Cases</SectionLabel>
+
+        <h2 className="mx-auto mt-8 max-w-[820px] text-center font-display text-[38px] font-semibold leading-[1.1] text-white md:text-[52px]">
+          AI-Powered Knowledge for{' '}
+          <span className="italic gradient-text-blue">Equality</span>
+          <br className="hidden md:block" />
+          {' '}and{' '}
+          <span className="italic gradient-text-blue">Empowerment</span>
+        </h2>
+
+        <p className="mx-auto mt-6 max-w-[760px] text-center text-[15px] leading-7 text-[#a6b9d6]">
+          Our AI system connects scholars, creators, engineers, and changemakers — automating
+          knowledge access, providing verified insights, and transforming information into
+          actionable understanding.
+        </p>
+
+        <div className="mt-14 grid gap-6 md:grid-cols-2">
+          {USE_CASES.map((uc) => (
+            <UseCaseCard key={uc.title} {...uc} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

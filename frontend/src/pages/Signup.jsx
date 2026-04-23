@@ -40,8 +40,10 @@ export default function Signup() {
     <AuthLayout brandSide="left" brandVariant="signup">
       <div className="space-y-6">
         <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">Create an Account</h1>
-          <p className="mt-2 text-base" style={{ color: '#8b94b8' }}>
+          <h1 className="font-display text-[40px] font-bold leading-tight tracking-tight text-white md:text-[48px]">
+            Create an Account
+          </h1>
+          <p className="mt-3 text-[14px]" style={{ color: '#8b94b8' }}>
             Begin your journey towards knowledge and enlightenment.
           </p>
         </div>
