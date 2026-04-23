@@ -64,94 +64,89 @@ export default function Home() {
     <MainLayout>
       <div className="mx-auto max-w-[1440px] space-y-12 px-6 pb-20 pt-10 md:px-[72px] md:pt-[52px]">
         <RevealOnScroll>
-          <section id="home" className="relative overflow-hidden rounded-2xl border border-[#1d2f52] bg-[radial-gradient(circle_at_20%_-10%,rgba(59,130,246,0.26),transparent_45%),#070d1f] px-5 pb-12 pt-8 md:min-h-[700px] md:px-10 md:pb-16 md:pt-11">
-          <div className="pointer-events-none absolute inset-x-0 top-[116px] h-px bg-[linear-gradient(90deg,transparent,rgba(37,99,235,0.55),transparent)]" />
-          <div
-            className="hero-line-scroll pointer-events-none absolute -left-24 top-[230px] h-[320px] w-[1300px] rounded-[100%] border-t border-[#1f4a8a]/70"
-            style={{ transform: `translateX(${Math.min(scrollY * 0.035, 28)}px)` }}
-          />
-          <div
-            className="hero-line-scroll pointer-events-none absolute -left-28 top-[258px] h-[360px] w-[1360px] rounded-[100%] border-t border-[#1f4a8a]/65"
-            style={{ transform: `translateX(${Math.min(scrollY * 0.03, 24)}px)` }}
-          />
-          <div
-            className="hero-line-scroll pointer-events-none absolute -left-32 top-[286px] h-[400px] w-[1420px] rounded-[100%] border-t border-[#1f4a8a]/55"
-            style={{ transform: `translateX(${Math.min(scrollY * 0.024, 20)}px)` }}
-          />
-          <div
-            className="hero-line-scroll pointer-events-none absolute -left-36 top-[314px] h-[440px] w-[1480px] rounded-[100%] border-t border-[#1f4a8a]/45"
-            style={{ transform: `translateX(${Math.min(scrollY * 0.02, 16)}px)` }}
-          />
-          <div className="float-slow pulse-glow absolute left-[12%] top-[19%] flex h-10 w-10 items-center justify-center rounded-lg border border-[#2d73c8]/80 bg-[#0c1f44]/70 text-[#79c4ff]">
-            ⌂
-          </div>
-          <div className="float-slow-delayed pulse-glow absolute right-[15%] top-[21%] flex h-10 w-10 items-center justify-center rounded-lg border border-[#2d73c8]/80 bg-[#0c1f44]/70 text-[#79c4ff]">
-            ✦
-          </div>
-          <div className="float-slow absolute left-[20%] top-[51%] flex h-10 w-10 items-center justify-center rounded-lg border border-[#2d73c8]/70 bg-[#0c1f44]/60 text-[#79c4ff]">
-            ○
-          </div>
-          <div className="float-slow-delayed absolute right-[18%] top-[47%] flex h-10 w-10 items-center justify-center rounded-lg border border-[#2d73c8]/70 bg-[#0c1f44]/60 text-[#79c4ff]">
-            ⚡
-          </div>
+          <section
+            id="home"
+            className="relative overflow-hidden bg-[radial-gradient(circle_at_50%_5%,rgba(41,108,255,0.18),rgba(6,11,26,0.98)_42%),linear-gradient(180deg,#050a18_0%,#030611_100%)] px-4 pb-12 pt-8 md:min-h-[700px] md:px-10 md:pb-14 md:pt-11"
+          >
+            <div className="pointer-events-none absolute inset-x-0 top-[122px] h-px bg-[linear-gradient(90deg,transparent,rgba(33,183,255,0.48),transparent)] blur-[0.4px]" />
+            <div className="pointer-events-none absolute -left-10 -top-16 h-[420px] w-[420px] rounded-full bg-[#2d7dfb]/20 blur-[130px]" />
+            <div className="pointer-events-none absolute -right-16 top-0 h-[420px] w-[420px] rounded-full bg-[#1d66de]/20 blur-[120px]" />
+            <div
+              className="hero-line-scroll pointer-events-none absolute -left-20 top-[252px] h-[320px] w-[1320px] rounded-[100%] border-t border-[#1d4d9a]/70"
+              style={{ transform: `translateX(${Math.min(scrollY * 0.035, 28)}px)` }}
+            />
+            <div
+              className="hero-line-scroll pointer-events-none absolute -left-24 top-[280px] h-[360px] w-[1380px] rounded-[100%] border-t border-[#1d4d9a]/62"
+              style={{ transform: `translateX(${Math.min(scrollY * 0.03, 24)}px)` }}
+            />
+            <div
+              className="hero-line-scroll pointer-events-none absolute -left-28 top-[308px] h-[400px] w-[1440px] rounded-[100%] border-t border-[#1d4d9a]/56"
+              style={{ transform: `translateX(${Math.min(scrollY * 0.024, 20)}px)` }}
+            />
+            <div
+              className="hero-line-scroll pointer-events-none absolute -left-32 top-[336px] h-[440px] w-[1500px] rounded-[100%] border-t border-[#1d4d9a]/50"
+              style={{ transform: `translateX(${Math.min(scrollY * 0.02, 16)}px)` }}
+            />
+            <div className="float-slow pulse-glow absolute left-[13%] top-[21%] flex h-10 w-10 items-center justify-center rounded-xl border border-[#2d73c8]/80 bg-[#0b2148]/75 text-[#79c4ff] shadow-[0_0_28px_rgba(50,142,255,0.42)]">⌂</div>
+            <div className="float-slow-delayed pulse-glow absolute right-[14%] top-[19%] flex h-10 w-10 items-center justify-center rounded-xl border border-[#2d73c8]/80 bg-[#0b2148]/75 text-[#79c4ff] shadow-[0_0_28px_rgba(50,142,255,0.42)]">◫</div>
+            <div className="float-slow absolute left-[22%] top-[63%] flex h-10 w-10 items-center justify-center rounded-xl border border-[#2d73c8]/70 bg-[#0b2148]/65 text-[#79c4ff] shadow-[0_0_24px_rgba(50,142,255,0.34)]">🛡</div>
+            <div className="float-slow-delayed absolute right-[15%] top-[52%] flex h-10 w-10 items-center justify-center rounded-xl border border-[#2d73c8]/70 bg-[#0b2148]/65 text-[#79c4ff] shadow-[0_0_24px_rgba(50,142,255,0.34)]">⚡</div>
 
-          <div className="relative z-10 mx-auto flex max-w-[1120px] flex-col items-center text-center md:pt-8">
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[#2a4d86] bg-[#0c1935]/75 px-4 py-2 text-sm text-[#d3e4ff]">
-              <span className="text-[#4ea7ff]">✦</span>
-              Trusted by AI Power Users Worldwide
-            </div>
-
-            <h1 className="max-w-[980px] text-[46px] font-semibold leading-[1.05] text-white md:text-[66px]">
-              Empower Through <span className="text-[#75b7ff]">Knowledge.</span>
-              <br />
-              Scale with Intelligent AI
-            </h1>
-
-            <p className="mt-5 max-w-[840px] text-base leading-7 text-[#cad9f3] md:text-lg md:leading-[1.45]">
-              Where broken parenting systems meet intelligent AI. Get instant answers, personalized guidance, and
-              expert-backed insights - so every parent can make confident decisions.
-            </p>
-
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <button className="h-11 rounded-md border border-[#4675bb] bg-[#0b152b] px-7 text-base text-white transition duration-300 hover:-translate-y-0.5 hover:border-[#5c94e6] hover:shadow-[0_8px_24px_rgba(52,128,255,0.28)]">
-                Watch Demo
-              </button>
-              <button className="h-11 rounded-md bg-gradient-to-r from-[#0078ff] to-[#2d9dff] px-7 text-base text-white transition duration-300 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_10px_28px_rgba(23,130,255,0.42)]">
-                BheemBot
-              </button>
-            </div>
-
-            <div className="mt-9 flex items-center gap-10 md:hidden">
-              <div>
-                <p className="text-3xl font-semibold text-[#66b1ff]">4.8+</p>
-                <p className="text-sm text-[#8fa9cf]">Store Rating</p>
+            <div className="relative z-10 mx-auto flex max-w-[1150px] flex-col items-center text-center md:pt-10">
+              <div className="mb-11 inline-flex items-center gap-2 rounded-full border border-[#3a5e94] bg-[#0f1d3b]/75 px-5 py-2 text-sm text-[#d3e4ff] shadow-[0_0_22px_rgba(43,126,255,0.2)]">
+                <span className="text-[#4ea7ff]">✦</span>
+                Trusted by AI Power Users Worldwide
               </div>
-              <div>
-                <p className="text-3xl font-semibold text-[#66b1ff]">24k+</p>
-                <p className="text-sm text-[#8fa9cf]">Satisfied Customers</p>
+              <h1 className="max-w-[1020px] text-[50px] font-semibold leading-[1.02] text-white md:text-[72px]">
+                Empower Through <span className="bg-gradient-to-r from-[#c9dcff] to-[#3f86ff] bg-clip-text text-transparent">Knowledge.</span>
+                <br />
+                Scale with Intelligent AI
+              </h1>
+              <p className="mt-8 max-w-[860px] text-base leading-7 text-[#cad9f3] md:text-[31px] md:leading-[1.45] md:[font-size:31px]">
+                Where broken parenting systems meet intelligent AI.
+                <br />
+                Get instant answers, personalized guidance, and expert-backed insights - so every parent can
+                <br />
+                make confident decisions.
+              </p>
+              <div className="mt-10 flex flex-wrap items-center justify-center gap-5">
+                <button className="h-12 rounded-lg border border-[#5f8cd2] bg-transparent px-8 text-base text-white transition duration-300 hover:-translate-y-0.5 hover:border-[#84b0f1] hover:shadow-[0_10px_30px_rgba(59,145,255,0.24)]">
+                  Watch Demo ▷
+                </button>
+                <button className="h-12 rounded-lg bg-gradient-to-r from-[#0a7dff] to-[#3a9fff] px-8 text-base text-white transition duration-300 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_12px_36px_rgba(17,122,255,0.46)]">
+                  BheemBot
+                </button>
+              </div>
+              <div className="mt-9 flex items-center gap-10 md:hidden">
+                <div>
+                  <p className="text-3xl font-semibold text-[#3f9fff]">4.8+</p>
+                  <p className="mt-1 text-xs text-[#90a8cc]">Stars Rating</p>
+                </div>
+                <div>
+                  <p className="text-3xl font-semibold text-[#3f9fff]">24k+</p>
+                  <p className="mt-1 text-xs text-[#90a8cc]">Satisfied Customer</p>
+                </div>
               </div>
             </div>
 
-          </div>
-
-          <div className="absolute bottom-7 left-8 hidden items-end gap-9 md:flex">
-            <div>
-              <p className="text-[44px] font-semibold leading-none text-[#3f9fff]">4.8+</p>
-              <p className="mt-1 text-xs text-[#90a8cc]">Stars Rating</p>
+            <div className="absolute bottom-3 left-8 hidden items-end gap-11 md:flex">
+              <div>
+                <p className="text-[42px] font-semibold leading-none text-[#3f9fff]">4.8+</p>
+                <p className="mt-1 text-xs text-[#90a8cc]">Stars Rating</p>
+              </div>
+              <div>
+                <p className="text-[42px] font-semibold leading-none text-[#3f9fff]">24k+</p>
+                <p className="mt-1 text-xs text-[#90a8cc]">Satisfied Customer</p>
+              </div>
             </div>
-            <div>
-              <p className="text-[44px] font-semibold leading-none text-[#3f9fff]">24k+</p>
-              <p className="mt-1 text-xs text-[#90a8cc]">Satisfied Customer</p>
-            </div>
-          </div>
 
-          <div className="absolute bottom-5 right-7 hidden w-[260px] rounded-xl border border-[#2b3d66] bg-[linear-gradient(135deg,rgba(15,20,35,0.95),rgba(11,16,32,0.88))] px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.45)] md:block">
-            <p className="text-[26px] font-semibold text-white">BEST AI TOOLS</p>
-            <p className="mt-1 text-[10px] leading-relaxed text-[#a7b4cc]">
-              Using AI to democratize parenting knowledge and
-              create equal beginnings
-            </p>
-          </div>
+            <div className="absolute bottom-1 right-7 hidden w-[252px] rounded-xl border border-[#466399]/45 bg-[rgba(16,24,45,0.45)] px-4 py-3 backdrop-blur-md shadow-[0_0_30px_rgba(48,104,201,0.22)] md:block">
+              <p className="text-[31px] font-semibold leading-none text-white">BEST AI TOOLS</p>
+              <p className="mt-2 text-[10px] leading-relaxed text-[#b8c3d8]">
+                Using AI to democratize parenting knowledge and
+                create equal beginnings
+              </p>
+            </div>
           </section>
         </RevealOnScroll>
 
