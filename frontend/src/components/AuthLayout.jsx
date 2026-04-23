@@ -29,7 +29,7 @@ export default function AuthLayout({ children, brandSide = 'right', brandVariant
             'radial-gradient(120% 120% at 50% 100%, rgba(96,165,250,0.14) 0%, rgba(59,130,246,0.05) 35%, transparent 75%)',
         }}
       />
-      <div className="flex flex-col md:flex-row min-h-screen w-full">
+      <div className="relative z-10 flex flex-col md:flex-row min-h-screen w-full">
         {brandSide === 'left' ? (
           <>
             {brandPanel}
