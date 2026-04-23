@@ -49,7 +49,7 @@ function FramedImage({ src, label, variant = 'login' }) {
   const isSignup = variant === 'signup';
 
   return (
-    <div className="relative mx-auto w-full max-w-[520px]">
+    <div className="relative mx-auto w-full max-w-[540px]">
       {/* ambient glow behind the frame */}
       <div className="pointer-events-none absolute -inset-8 rounded-[30px] bg-[radial-gradient(circle,rgba(95,140,255,0.22)_0%,transparent_70%)] blur-xl" />
 
@@ -102,24 +102,27 @@ export default function BrandPanel({ variant = 'login' }) {
         <BrandLogo />
       </div>
 
-      <div className="mt-8 flex flex-1 items-center justify-center">
+      {/* Center image + tagline together as one block — my-auto absorbs any
+          extra vertical space from a taller form side so we never get a gap
+          between the image and the tagline. */}
+      <div className="my-auto flex flex-col items-center gap-8 py-8">
         <FramedImage src={src} label={label} variant={variant} />
-      </div>
 
-      <div className="mt-10 text-center">
-        <p className="font-serif text-[15px] italic text-[#9fb5e0]">
-          “Educate, Agitate, Organize”
-        </p>
-        <p className="mt-1 text-[11.5px] tracking-[0.18em] uppercase text-[#6b80ab]">
-          — Dr. B.R. Ambedkar
-        </p>
-        <div className="mt-6">
-          <p className="font-display text-[30px] font-semibold leading-[1.1] text-white md:text-[34px]">
-            Empowering Minds with
+        <div className="text-center">
+          <p className="font-serif text-[15px] italic text-[#9fb5e0]">
+            “Educate, Agitate, Organize”
           </p>
-          <p className="font-display text-[30px] font-semibold italic leading-[1.1] gradient-text-cyan md:text-[34px]">
-            Knowledge &amp; Equality
+          <p className="mt-1 text-[11.5px] uppercase tracking-[0.18em] text-[#6b80ab]">
+            — Dr. B.R. Ambedkar
           </p>
+          <div className="mt-5">
+            <p className="font-display text-[28px] font-semibold leading-[1.1] text-white md:text-[32px]">
+              Empowering Minds with
+            </p>
+            <p className="font-display text-[28px] font-semibold italic leading-[1.1] gradient-text-cyan md:text-[32px]">
+              Knowledge &amp; Equality
+            </p>
+          </div>
         </div>
       </div>
     </div>

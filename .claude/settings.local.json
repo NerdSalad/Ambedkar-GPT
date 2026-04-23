@@ -40,7 +40,9 @@
       "Bash(cp \"/mnt/efs/krish_workspace/Ambedkar-GPT/resources/india and digital/image 10 [Vectorized].png\" /mnt/efs/krish_workspace/Ambedkar-GPT/frontend/src/assets/images/digital-india-logo.png)",
       "Bash(curl -s -o /dev/null -w \"status=%{http_code}\\\\n\" http://127.0.0.1:5191/)",
       "Bash(node shot-mv.mjs)",
-      "Bash(curl -s -o /dev/null -w \"status=%{http_code}\\\\n\" http://127.0.0.1:5192/)"
+      "Bash(curl -s -o /dev/null -w \"status=%{http_code}\\\\n\" http://127.0.0.1:5192/)",
+      "Bash(curl -s -o /dev/null -w \"status=%{http_code}\\\\n\" http://127.0.0.1:5193/)",
+      "Bash(node shot-final.mjs)"
     ]
   }
 }
