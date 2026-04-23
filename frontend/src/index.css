@@ -300,11 +300,6 @@ html { scroll-behavior: smooth; }
   height: 24px;
   background: rgba(63, 159, 255, 0.2);
 }
-.custom-cursor--trail {
-  border-radius: 9999px;
-  background: #5fa8ff;
-  box-shadow: 0 0 6px rgba(95, 168, 255, 0.55);
-}
 .custom-cursor--dot.cursor--active {
   transform-origin: center;
   opacity: 0.8;

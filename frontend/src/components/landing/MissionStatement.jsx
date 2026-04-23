@@ -65,22 +65,22 @@ export default function MissionStatement({
   ],
 }) {
   const copy = (
-    <div className="flex-1">
+    <div className="w-full max-w-[460px]">
       <span className="inline-flex items-center rounded-md border border-[#3a6bc4]/60 bg-[#0d1a36]/70 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-[#9dc3ff]">
         {label}
       </span>
 
-      <h2 className="mt-6 font-display text-[44px] font-semibold leading-[1.05] tracking-tight text-white md:text-[56px]">
+      <h2 className="mt-6 font-display text-[42px] font-semibold leading-[1.05] tracking-tight text-white md:text-[52px]">
         {titlePrimary}
         <br />
         <span className="italic gradient-text-blue">{titleAccent}</span>
       </h2>
 
-      <p className="mt-6 max-w-[460px] text-[14.5px] leading-[1.8] text-[#aec0de]">
+      <p className="mt-6 text-[14.5px] leading-[1.8] text-[#aec0de]">
         {description}
       </p>
 
-      <div className="mt-8 grid max-w-[480px] gap-3 sm:grid-cols-2">
+      <div className="mt-8 grid gap-3 sm:grid-cols-2">
         {chips.map((c, i) => (
           <FeatureChip key={i} icon={c.icon}>
             {c.text}
@@ -91,7 +91,7 @@ export default function MissionStatement({
   );
 
   const imageBlock = (
-    <div className="flex-1">
+    <div className="w-full">
       <PosterFrame
         image={image}
         alt={imageAlt}
@@ -103,7 +103,7 @@ export default function MissionStatement({
 
   return (
     <section className="relative py-20 md:py-28">
-      <div className="mx-auto grid max-w-[1180px] items-center gap-12 px-6 md:grid-cols-2 md:gap-12">
+      <div className="mx-auto grid max-w-[1180px] items-center gap-12 px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] md:gap-14">
         {imageFirst ? (
           <>
             {imageBlock}

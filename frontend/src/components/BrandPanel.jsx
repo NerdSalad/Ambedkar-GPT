@@ -97,15 +97,16 @@ export default function BrandPanel({ variant = 'login' }) {
   const label = isSignup ? 'Ambedkar Statue' : 'Ambedkar Portrait';
 
   return (
-    <div className="relative flex h-full flex-col px-6 pt-10 pb-10 md:px-8 md:pt-12 md:pb-12">
+    <div className="relative flex h-full min-h-[100svh] flex-col px-6 pt-8 pb-10 md:px-8 md:pt-10 md:pb-12">
+      {/* Logo: top */}
       <div className="flex justify-center md:justify-start">
         <BrandLogo />
       </div>
 
-      {/* Center image + tagline together as one block — my-auto absorbs any
-          extra vertical space from a taller form side so we never get a gap
-          between the image and the tagline. */}
-      <div className="my-auto flex flex-col items-center gap-8 py-8">
+      {/* Middle zone: image + tagline as ONE tight group, vertically centered
+          in whatever space remains after the logo. flex-1 claims the leftover
+          height; justify-center pins the group to the middle of that span. */}
+      <div className="flex flex-1 flex-col items-center justify-center gap-6 py-6">
         <FramedImage src={src} label={label} variant={variant} />
 
         <div className="text-center">
@@ -115,11 +116,11 @@ export default function BrandPanel({ variant = 'login' }) {
           <p className="mt-1 text-[11.5px] uppercase tracking-[0.18em] text-[#6b80ab]">
             — Dr. B.R. Ambedkar
           </p>
-          <div className="mt-5">
-            <p className="font-display text-[28px] font-semibold leading-[1.1] text-white md:text-[32px]">
+          <div className="mt-4">
+            <p className="font-display text-[26px] font-semibold leading-[1.1] text-white md:text-[30px]">
               Empowering Minds with
             </p>
-            <p className="font-display text-[28px] font-semibold italic leading-[1.1] gradient-text-cyan md:text-[32px]">
+            <p className="font-display text-[26px] font-semibold italic leading-[1.1] gradient-text-cyan md:text-[30px]">
               Knowledge &amp; Equality
             </p>
           </div>
