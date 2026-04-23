@@ -12,47 +12,57 @@ function FeatureChip({ icon: Icon, children }) {
   );
 }
 
-// Poster frame — the ambedkar-portrait asset overlaid with a JAY BHIM wordmark
-function PosterFrame({ image, label }) {
+// Poster frame — image inside a dark glass card with optional wordmark overlay
+function PosterFrame({ image, alt, banner, showBanner }) {
   return (
-    <div className="relative mx-auto w-full max-w-[380px]">
+    <div className="relative mx-auto w-full max-w-[420px]">
       {/* ambient glow behind the frame */}
       <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[28px] bg-[radial-gradient(circle,rgba(63,120,255,0.22)_0%,transparent_70%)] blur-2xl" />
 
       <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-[#2a4375]/60 bg-[#0a1430] shadow-[0_24px_60px_rgba(0,0,0,0.55),inset_0_0_0_1px_rgba(115,160,240,0.08)]">
         {image ? (
-          <img src={image} alt={label} className="h-full w-full object-cover" />
+          <img src={image} alt={alt} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#0b1432] via-[#0d1a3f] to-[#0a1430]">
-            <span className="font-display text-4xl font-bold text-white/20">{label}</span>
+            <span className="font-display text-4xl font-bold text-white/20">{alt}</span>
           </div>
         )}
 
-        {/* Wordmark banner across the top */}
-        <div className="pointer-events-none absolute inset-x-0 top-5 flex justify-center">
-          <span className="font-display text-[40px] font-black italic tracking-[0.06em] text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.75)]">
-            {label}
-          </span>
-        </div>
+        {showBanner && banner && (
+          <>
+            {/* darken strip behind the wordmark */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 top-5 flex justify-center">
+              <span className="font-display text-[40px] font-black italic tracking-[0.06em] text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.75)]">
+                {banner}
+              </span>
+            </div>
+          </>
+        )}
 
-        {/* subtle tonal overlays */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/50 to-transparent" />
+        {/* bottom fade so the frame blends into the dark page */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#030611]/80 to-transparent" />
       </div>
     </div>
   );
 }
 
-// MissionStatement — left-aligned copy + poster frame on the right (reversible
-// via imageFirst). Matches Landing Page/Screenshot 183232.
+// MissionStatement — label pill + two-line title + description + 2 feature chips
+// paired with a framed image. Matches Screenshots 183232 / 212605 / 212620.
 export default function MissionStatement({
-  label       = 'MISSION STATEMENT',
+  label        = 'MISSION STATEMENT',
   titlePrimary = 'Empowering with',
   titleAccent  = 'Truth',
   description  = '',
   image,
-  imageLabel   = 'JAY BHIM',
+  imageAlt     = 'Ambedkar portrait',
+  banner       = '',
+  showBanner   = false,
   imageFirst   = false,
+  chips = [
+    { icon: ShieldCheck, text: 'Verified insights with exact source citations' },
+    { icon: Sparkles,    text: 'AI-powered simplification of complex knowledge' },
+  ],
 }) {
   const copy = (
     <div className="flex-1">
@@ -63,7 +73,7 @@ export default function MissionStatement({
       <h2 className="mt-6 font-display text-[44px] font-semibold leading-[1.05] tracking-tight text-white md:text-[56px]">
         {titlePrimary}
         <br />
-        {titleAccent}
+        <span className="italic gradient-text-blue">{titleAccent}</span>
       </h2>
 
       <p className="mt-6 max-w-[460px] text-[14.5px] leading-[1.8] text-[#aec0de]">
@@ -71,24 +81,28 @@ export default function MissionStatement({
       </p>
 
       <div className="mt-8 grid max-w-[480px] gap-3 sm:grid-cols-2">
-        <FeatureChip icon={ShieldCheck}>
-          Verified insights with exact source citations
-        </FeatureChip>
-        <FeatureChip icon={Sparkles}>
-          AI-powered simplification of complex knowledge
-        </FeatureChip>
+        {chips.map((c, i) => (
+          <FeatureChip key={i} icon={c.icon}>
+            {c.text}
+          </FeatureChip>
+        ))}
       </div>
     </div>
   );
 
   const imageBlock = (
     <div className="flex-1">
-      <PosterFrame image={image} label={imageLabel} />
+      <PosterFrame
+        image={image}
+        alt={imageAlt}
+        banner={banner}
+        showBanner={showBanner}
+      />
     </div>
   );
 
   return (
-    <section id="about" className="relative py-20 md:py-28">
+    <section className="relative py-20 md:py-28">
       <div className="mx-auto grid max-w-[1100px] items-center gap-12 px-6 md:grid-cols-2 md:gap-16">
         {imageFirst ? (
           <>

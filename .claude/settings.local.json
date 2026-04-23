@@ -20,7 +20,26 @@
       "Bash(pkill -f \"vite --host 127.0.0.1 --port 5181\")",
       "Bash(git ls-remote *)",
       "Bash(git pull *)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "Bash(curl -s http://127.0.0.1:5190/login)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:5190/login)",
+      "Bash(curl -s http://127.0.0.1:5190/src/pages/Login.jsx -o /tmp/loginjsx.out -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s http://127.0.0.1:5190/src/components/AuthLayout.jsx -o /tmp/auth.out -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s http://127.0.0.1:5190/src/components/BrandPanel.jsx -o /tmp/brand.out -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s http://127.0.0.1:5190/src/components/BackgroundDecorations.jsx -o /tmp/bg.out -w \"%{http_code}\\\\n\")",
+      "Bash(node /tmp/shot.mjs)",
+      "Bash(node ./shot-temp.mjs)",
+      "Bash(node shot3.mjs)",
+      "Bash(node shot4.mjs)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:5190/)",
+      "Bash(node shot6.mjs)",
+      "Bash(cp \"/mnt/efs/krish_workspace/Ambedkar-GPT/resources/ambedkar images for landing page/Image.png\" /mnt/efs/krish_workspace/Ambedkar-GPT/frontend/src/assets/images/mission-jay-bhim.png)",
+      "Bash(cp \"/mnt/efs/krish_workspace/Ambedkar-GPT/resources/ambedkar images for landing page/Image \\(1\\).png\" /mnt/efs/krish_workspace/Ambedkar-GPT/frontend/src/assets/images/vision-ambedkar.png)",
+      "Bash(cp \"/mnt/efs/krish_workspace/Ambedkar-GPT/resources/ambedkar images for landing page/Image \\(2\\).png\" /mnt/efs/krish_workspace/Ambedkar-GPT/frontend/src/assets/images/purpose-ambedkar.png)",
+      "Bash(cp \"/mnt/efs/krish_workspace/Ambedkar-GPT/resources/india and digital/image 9 [Vectorized].png\" /mnt/efs/krish_workspace/Ambedkar-GPT/frontend/src/assets/images/indiaai-logo.png)",
+      "Bash(cp \"/mnt/efs/krish_workspace/Ambedkar-GPT/resources/india and digital/image 10 [Vectorized].png\" /mnt/efs/krish_workspace/Ambedkar-GPT/frontend/src/assets/images/digital-india-logo.png)",
+      "Bash(curl -s -o /dev/null -w \"status=%{http_code}\\\\n\" http://127.0.0.1:5191/)",
+      "Bash(node shot-mv.mjs)"
     ]
   }
 }
