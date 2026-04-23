@@ -8,10 +8,12 @@ import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Otp from './pages/Otp';
+import CustomCursor from './components/CustomCursor';
 
 export default function App() {
   return (
     <BrowserRouter>
+      <CustomCursor />
       <Routes>
         <Route path="/"       element={<Home />} />
         <Route path="/about"    element={<About />} />

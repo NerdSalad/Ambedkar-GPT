@@ -41,26 +41,51 @@ function BrandLogo() {
   );
 }
 
-// Framed image with a soft blue border glow
-function FramedImage({ src, label }) {
+// Framed image with a soft blue border glow.
+// `variant` lets us tune the blend for the signup statue (whose native beige/stone
+// background would otherwise clash with the dark card).
+function FramedImage({ src, label, variant = 'login' }) {
   const [error, setError] = useState(false);
+  const isSignup = variant === 'signup';
 
   return (
-    <div className="relative mx-auto w-full max-w-[340px]">
-      <div className="pointer-events-none absolute -inset-6 rounded-[28px] bg-[radial-gradient(circle,rgba(95,140,255,0.18)_0%,transparent_70%)] blur-xl" />
-      <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-[#2a4375]/60 bg-[#0a1430] shadow-[0_24px_60px_rgba(0,0,0,0.55),inset_0_0_0_1px_rgba(115,160,240,0.08)]">
+    <div className="relative mx-auto w-full max-w-[440px]">
+      {/* ambient glow behind the frame */}
+      <div className="pointer-events-none absolute -inset-8 rounded-[30px] bg-[radial-gradient(circle,rgba(95,140,255,0.22)_0%,transparent_70%)] blur-xl" />
+
+      <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-[#2a4375]/60 bg-[#0a1430] shadow-[0_26px_68px_rgba(0,0,0,0.55),inset_0_0_0_1px_rgba(115,160,240,0.08)]">
         {src && !error ? (
           <img
             src={src}
             alt={label}
             onError={() => setError(true)}
             className="h-full w-full object-cover object-center"
+            style={{
+              // statue photo is flatter / lighter — nudge it toward the card tones
+              filter: isSignup
+                ? 'brightness(0.88) saturate(1.15) contrast(1.05) hue-rotate(-8deg)'
+                : 'brightness(0.98) saturate(1.05)',
+            }}
           />
         ) : (
           <ImagePlaceholder label={label} />
         )}
+
+        {/* Full-frame navy tint — kills the signup statue's beige background and
+            gives the portrait a tiny extra warmth of the card palette. Heavier
+            on signup than login. */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background: isSignup
+              ? 'linear-gradient(180deg, rgba(10,20,48,0.35) 0%, rgba(10,20,48,0.15) 45%, rgba(5,10,28,0.55) 100%)'
+              : 'linear-gradient(180deg, rgba(10,20,48,0.12) 0%, rgba(10,20,48,0) 45%, rgba(5,10,28,0.45) 100%)',
+          }}
+        />
+
+        {/* edge highlights */}
         <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white/5 to-transparent" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#050a18]/60 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#050a18]/70 to-transparent" />
       </div>
     </div>
   );
@@ -78,7 +103,7 @@ export default function BrandPanel({ variant = 'login' }) {
       </div>
 
       <div className="mt-8 flex flex-1 items-center justify-center">
-        <FramedImage src={src} label={label} />
+        <FramedImage src={src} label={label} variant={variant} />
       </div>
 
       <div className="mt-10 text-center">
