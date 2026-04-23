@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import logoSrc from '../assets/images/logo-animation.png';
+import { markAppReady } from '../utils/appReady';
 
 // Full-viewport splash that plays on first mount, then fades out.
 // Total lifecycle: ~3s
@@ -19,6 +20,7 @@ export default function OpeningSplash({ onDone }) {
     const t1 = setTimeout(() => setPhase('exit'), holdMs);
     const t2 = setTimeout(() => {
       setPhase('gone');
+      markAppReady();
       onDone?.();
     }, holdMs + 600);
 
