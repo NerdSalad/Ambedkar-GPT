@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Play, ArrowRight, Home as HomeIcon, LayoutGrid, Shield, Zap } from 'lucide-react';
 import Sparkle from './Sparkle';
 import CountUp from './CountUp';
+import squiggleSrc from '../../assets/images/squiggle-lines.png';
 
 // Words that cycle through the accent slot in the hero headline
 const ROTATING_WORDS = ['Knowledge.', 'Truth.', 'Equality.', 'Justice.', 'Inclusion.'];
@@ -54,15 +55,20 @@ function RotatingWord({ words, intervalMs = 2600 }) {
   );
 }
 
+const BUBBLE_VARIANTS = {
+  a: 'float-bubble-a',
+  b: 'float-bubble-b',
+  c: 'float-bubble-c',
+  d: 'float-bubble-d',
+};
+
 // Floating decorative icon with soft-blue glass badge look
-function FloatIcon({ icon: Icon, className = '', delayed = false }) {
+function FloatIcon({ icon: Icon, className = '', variant = 'a' }) {
   return (
     <div
-      className={`${
-        delayed ? 'float-slow-delayed' : 'float-slow'
-      } pulse-glow pointer-events-none absolute flex h-10 w-10 items-center justify-center rounded-xl border border-[#2d73c8]/80 bg-[#0b2148]/75 text-[#79c4ff] shadow-[0_0_28px_rgba(50,142,255,0.42)] ${className}`}
+      className={`${BUBBLE_VARIANTS[variant]} pulse-glow group absolute flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-[#2d73c8]/80 bg-[#0b2148]/75 text-[#79c4ff] shadow-[0_0_28px_rgba(50,142,255,0.42)] transition-all duration-300 hover:scale-110 hover:border-[#5fa5ff]/90 hover:bg-[#0d2a5a]/90 hover:shadow-[0_0_44px_rgba(63,159,255,0.75)] hover:text-white ${className}`}
     >
-      <Icon size={18} strokeWidth={1.6} />
+      <Icon size={18} strokeWidth={1.6} className="transition-transform duration-300 group-hover:scale-110" />
     </div>
   );
 }
@@ -83,35 +89,43 @@ export default function HeroSection() {
       id="home"
       className="relative overflow-hidden bg-[radial-gradient(circle_at_50%_0%,rgba(41,108,255,0.18),rgba(6,11,26,0.98)_42%),linear-gradient(180deg,#050a18_0%,#030611_100%)] pt-24 md:min-h-[900px] md:pt-32"
     >
-      {/* ── Radar grid ─────────────────────────────────── */}
-      <div className="pointer-events-none absolute inset-0 radar-grid opacity-60" />
-
-      {/* ── Top hairline glow ──────────────────────────── */}
-      <div className="pointer-events-none absolute inset-x-0 top-20 h-px bg-[linear-gradient(90deg,transparent,rgba(33,183,255,0.5),transparent)] blur-[0.4px]" />
-
       {/* ── Corner glows ──────────────────────────────── */}
       <div className="pointer-events-none absolute -left-24 -top-16 h-[460px] w-[460px] rounded-full bg-[#2d7dfb]/25 blur-[130px]" />
       <div className="pointer-events-none absolute -right-24 top-0 h-[460px] w-[460px] rounded-full bg-[#1d66de]/25 blur-[120px]" />
       <div className="pointer-events-none absolute left-1/2 top-[58%] h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-[#1e4fb5]/25 blur-[120px]" />
 
-      {/* ── Concentric parallax arcs ───────────────────── */}
-      {[260, 290, 320, 355, 390].map((top, i) => (
-        <div
-          key={top}
-          className="hero-line-scroll pointer-events-none absolute -left-32 h-[360px] w-[1500px] rounded-[100%] border-t"
-          style={{
-            top: `${top}px`,
-            borderColor: `rgba(29,77,154,${0.75 - i * 0.12})`,
-            transform: `translateX(${Math.min(scrollY * (0.04 - i * 0.004), 30)}px)`,
-          }}
-        />
-      ))}
+      {/* ── Squiggle lines background ─────────────────── */}
+      <div
+        className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-15"
+        style={{ backgroundImage: `url(${squiggleSrc})` }}
+      />
+
+      {/* ── Scanner beam ──────────────────────────────── */}
+      <div className="pointer-events-none absolute inset-x-0 z-10" style={{ top: '96px' }}>
+        <div className="hero-scan-beam relative h-px w-full">
+          {/* core glowing line */}
+          <div
+            className="absolute inset-x-0 h-px"
+            style={{
+              background: 'linear-gradient(90deg, transparent 0%, rgba(63,159,255,0.12) 8%, rgba(63,210,255,0.85) 30%, rgba(180,230,255,1) 50%, rgba(63,210,255,0.85) 70%, rgba(63,159,255,0.12) 92%, transparent 100%)',
+            }}
+          />
+          {/* bloom glow beneath the line */}
+          <div
+            className="absolute inset-x-0 -top-3 h-7"
+            style={{
+              background: 'linear-gradient(90deg, transparent 5%, rgba(63,159,255,0.04) 20%, rgba(100,200,255,0.18) 40%, rgba(160,225,255,0.22) 50%, rgba(100,200,255,0.18) 60%, rgba(63,159,255,0.04) 80%, transparent 95%)',
+              filter: 'blur(4px)',
+            }}
+          />
+        </div>
+      </div>
 
       {/* ── Floating icon badges ───────────────────────── */}
-      <FloatIcon icon={HomeIcon}   className="left-[12%] top-[22%]" />
-      <FloatIcon icon={LayoutGrid} className="right-[13%] top-[20%]" delayed />
-      <FloatIcon icon={Shield}     className="left-[20%] top-[64%]" />
-      <FloatIcon icon={Zap}        className="right-[15%] top-[53%]" delayed />
+      <FloatIcon icon={HomeIcon}   className="left-[12%] top-[22%]"  variant="a" />
+      <FloatIcon icon={LayoutGrid} className="right-[13%] top-[20%]" variant="b" />
+      <FloatIcon icon={Shield}     className="left-[20%] top-[64%]"  variant="c" />
+      <FloatIcon icon={Zap}        className="right-[15%] top-[53%]" variant="d" />
 
       {/* ── Content ───────────────────────────────────── */}
       <div className="relative z-10 mx-auto flex max-w-[1180px] flex-col items-center px-6 pt-8 pb-16 text-center md:pt-14 md:pb-24">
@@ -122,7 +136,7 @@ export default function HeroSection() {
         </div>
 
         {/* Headline — accent word rotates through Knowledge/Truth/Equality/… */}
-        <h1 className="max-w-[1040px] text-[42px] font-semibold leading-[1.05] tracking-tight text-white md:text-[72px] md:leading-[1.04]">
+        <h1 className="font-display max-w-[1040px] text-[42px] font-semibold leading-[1.05] tracking-tight text-white md:text-[72px] md:leading-[1.04]">
           Empower Through{' '}
           <RotatingWord words={ROTATING_WORDS} />
           <br />
@@ -143,7 +157,7 @@ export default function HeroSection() {
         <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
           <button
             type="button"
-            className="btn-outline-blue group inline-flex h-12 items-center gap-2.5 rounded-xl px-7 text-[15px] font-medium text-white"
+            className="btn-outline-blue group inline-flex h-12 items-center gap-2.5 rounded-xl px-7 font-count text-[15px] font-medium text-white"
           >
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 group-hover:bg-white/20 transition">
               <Play size={11} fill="currentColor" strokeWidth={0} className="translate-x-[1px]" />
@@ -152,7 +166,7 @@ export default function HeroSection() {
           </button>
           <button
             type="button"
-            className="btn-gradient inline-flex h-12 items-center gap-2 rounded-xl px-7 text-[15px] font-semibold text-white"
+            className="btn-gradient inline-flex h-12 items-center gap-2 rounded-xl px-7 font-count text-[15px] font-semibold text-white"
           >
             BheemBot
             <ArrowRight size={17} strokeWidth={2.2} />
@@ -164,14 +178,14 @@ export default function HeroSection() {
           {/* Stats (left) — count up from 0 when the hero enters view */}
           <div className="flex items-start gap-10 md:gap-12">
             <div className="text-left">
-              <p className="text-[36px] font-semibold leading-none text-[#3f9fff] md:text-[44px]">
+              <p className="font-display text-[36px] leading-none text-[#3f9fff] md:text-[44px]">
                 <CountUp end={4.8} decimals={1} />
                 <span className="text-[#3f9fff]/80">+</span>
               </p>
               <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#90a8cc]">Stars Rating</p>
             </div>
             <div className="text-left">
-              <p className="text-[36px] font-semibold leading-none text-[#3f9fff] md:text-[44px]">
+              <p className="font-display text-[36px] leading-none text-[#3f9fff] md:text-[44px]">
                 <CountUp
                   end={24}
                   format={(v) => `${Math.round(v)}k`}

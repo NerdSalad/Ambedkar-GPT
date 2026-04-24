@@ -13,15 +13,15 @@ function FeatureChip({ icon: Icon, children }) {
 }
 
 // Poster frame — image inside a dark glass card with optional wordmark overlay
-function PosterFrame({ image, alt, banner, showBanner }) {
+function PosterFrame({ image, alt, banner, showBanner, imagePosition = 'object-center' }) {
   return (
-    <div className="relative mx-auto w-full max-w-[540px]">
+    <div className="relative mx-auto w-full max-w-[360px]">
       {/* ambient glow behind the frame */}
       <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[28px] bg-[radial-gradient(circle,rgba(63,120,255,0.22)_0%,transparent_70%)] blur-2xl" />
 
       <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-[#2a4375]/60 bg-[#0a1430] shadow-[0_24px_60px_rgba(0,0,0,0.55),inset_0_0_0_1px_rgba(115,160,240,0.08)]">
         {image ? (
-          <img src={image} alt={alt} className="h-full w-full object-cover" />
+          <img src={image} alt={alt} className={`h-full w-full object-cover ${imagePosition}`} />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#0b1432] via-[#0d1a3f] to-[#0a1430]">
             <span className="font-display text-4xl font-bold text-white/20">{alt}</span>
@@ -50,15 +50,16 @@ function PosterFrame({ image, alt, banner, showBanner }) {
 // MissionStatement — label pill + two-line title + description + 2 feature chips
 // paired with a framed image. Matches Screenshots 183232 / 212605 / 212620.
 export default function MissionStatement({
-  label        = 'MISSION STATEMENT',
-  titlePrimary = 'Empowering with',
-  titleAccent  = 'Truth',
-  description  = '',
+  label         = 'MISSION STATEMENT',
+  titlePrimary  = 'Empowering with',
+  titleAccent   = 'Truth',
+  description   = '',
   image,
-  imageAlt     = 'Ambedkar portrait',
-  banner       = '',
-  showBanner   = false,
-  imageFirst   = false,
+  imageAlt      = 'Ambedkar portrait',
+  imagePosition = 'object-center',
+  banner        = '',
+  showBanner    = false,
+  imageFirst    = false,
   chips = [
     { icon: ShieldCheck, text: 'Verified insights with exact source citations' },
     { icon: Sparkles,    text: 'AI-powered simplification of complex knowledge' },
@@ -95,6 +96,7 @@ export default function MissionStatement({
       <PosterFrame
         image={image}
         alt={imageAlt}
+        imagePosition={imagePosition}
         banner={banner}
         showBanner={showBanner}
       />
@@ -103,7 +105,7 @@ export default function MissionStatement({
 
   return (
     <section className="relative py-20 md:py-28">
-      <div className="mx-auto grid max-w-[1180px] items-center gap-12 px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] md:gap-14">
+      <div className="mx-auto grid max-w-[1180px] items-start gap-12 px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] md:gap-14">
         {imageFirst ? (
           <>
             {imageBlock}

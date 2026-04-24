@@ -120,6 +120,18 @@ export default function BackgroundDecorations({ variant = 'login' }) {
         }}
       />
 
+      {/* Central image glow — bright white-blue halo centred on the Ambedkar image */}
+      <div
+        className="pointer-events-none absolute h-[700px] w-[700px] rounded-full blur-[90px]"
+        style={{
+          top: '50%',
+          transform: 'translateY(-50%)',
+          [ringsSide]: '0px',
+          background:
+            'radial-gradient(circle, rgba(200,220,255,0.28) 0%, rgba(120,170,255,0.14) 35%, transparent 70%)',
+        }}
+      />
+
       <ConcentricRings side={ringsSide} />
       <Waves side={wavesSide} />
 

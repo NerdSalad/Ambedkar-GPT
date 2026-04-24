@@ -1,10 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'Count';
+  src: url('./assets/fonts/Count.otf') format('opentype'),
+       url('./assets/fonts/Count.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 @theme {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-serif: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
-  --font-display: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --font-display: 'Anybody', 'Inter', system-ui, sans-serif;
+  --font-count: 'Count', 'Anybody', monospace;
 
   --color-navy-950: #05081a;
   --color-navy-900: #0a0e27;
@@ -68,7 +78,63 @@ html { scroll-behavior: smooth; }
 
 .hero-line-scroll { will-change: transform; transition: transform 120ms linear; }
 
+/* --- Hero scanner beam --- */
+@keyframes scanBeam {
+  0%   { transform: translateY(0);    opacity: 0; }
+  6%   { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { transform: translateY(580px); opacity: 0; }
+}
+.hero-scan-beam {
+  animation: scanBeam 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  will-change: transform, opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-scan-beam { animation: none; opacity: 0; }
+}
+
 @keyframes floatSlow { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+/* Organic bubble floats — each icon gets a unique X+Y path */
+@keyframes floatBubbleA {
+  0%   { transform: translate(0px,   0px);  }
+  20%  { transform: translate(5px,  -10px); }
+  45%  { transform: translate(9px,  -5px);  }
+  65%  { transform: translate(4px,  -14px); }
+  80%  { transform: translate(7px,  -8px);  }
+  100% { transform: translate(0px,   0px);  }
+}
+@keyframes floatBubbleB {
+  0%   { transform: translate(0px,   0px);  }
+  25%  { transform: translate(-6px, -8px);  }
+  50%  { transform: translate(-10px,-3px);  }
+  75%  { transform: translate(-4px, -12px); }
+  100% { transform: translate(0px,   0px);  }
+}
+@keyframes floatBubbleC {
+  0%   { transform: translate(0px,  0px);  }
+  30%  { transform: translate(-5px, 9px);  }
+  55%  { transform: translate(-9px, 4px);  }
+  75%  { transform: translate(-3px, 11px); }
+  100% { transform: translate(0px,  0px);  }
+}
+@keyframes floatBubbleD {
+  0%   { transform: translate(0px,  0px); }
+  25%  { transform: translate(6px,  8px); }
+  55%  { transform: translate(3px, 13px); }
+  75%  { transform: translate(8px,  5px); }
+  100% { transform: translate(0px,  0px); }
+}
+
+.float-bubble-a { animation: floatBubbleA 6.0s ease-in-out infinite; }
+.float-bubble-b { animation: floatBubbleB 7.2s ease-in-out infinite 1.1s; }
+.float-bubble-c { animation: floatBubbleC 5.8s ease-in-out infinite 0.6s; }
+.float-bubble-d { animation: floatBubbleD 6.8s ease-in-out infinite 1.8s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .float-bubble-a,.float-bubble-b,.float-bubble-c,.float-bubble-d { animation: none; }
+}
+
 @keyframes pulseGlow {
   0%,100% { opacity: 0.65; filter: drop-shadow(0 0 0 rgba(79,167,255,0)); }
   50%     { opacity: 1;    filter: drop-shadow(0 0 14px rgba(79,167,255,0.45)); }
@@ -185,6 +251,65 @@ html { scroll-behavior: smooth; }
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }
 
+/* --- Phone input (react-phone-number-input dark theme) --- */
+.phone-field {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background-color: #0f1833;
+  border: 1px solid #2a3566;
+  border-radius: 0.75rem;
+  padding: 0 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.phone-field:focus-within {
+  border-color: #4f6bff;
+  box-shadow: 0 0 0 3px rgba(79, 107, 255, 0.2);
+}
+.phone-field.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+.phone-field .PhoneInputCountry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 10px;
+  border-right: 1px solid #2a3566;
+  margin-right: 10px;
+  cursor: pointer;
+}
+.phone-field .PhoneInputCountrySelect {
+  background: transparent;
+  border: none;
+  color: #e5e7eb;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0;
+  width: 20px;
+}
+.phone-field .PhoneInputCountrySelectArrow {
+  color: #8b94b8;
+  margin-left: 4px;
+}
+.phone-field .PhoneInputCountryIcon {
+  width: 20px;
+  height: 14px;
+}
+.phone-field .PhoneInputInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e5e7eb;
+  font-size: 14px;
+  padding: 13px 0;
+}
+.phone-field .PhoneInputInput::placeholder { color: #8b94b8; }
+
 /* --- Cards / glass --- */
 .glass-card {
   background: linear-gradient(180deg, rgba(20,32,64,0.55) 0%, rgba(10,18,38,0.55) 100%);
@@ -212,12 +337,15 @@ html { scroll-behavior: smooth; }
   -webkit-mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 75%);
 }
 
-/* --- Serif display class --- */
+/* --- Font family utilities --- */
 .font-display {
   font-family: var(--font-display);
 }
 .font-serif {
   font-family: var(--font-serif);
+}
+.font-count {
+  font-family: var(--font-count);
 }
 
 /* --- Shimmer line --- */
@@ -317,9 +445,13 @@ html { scroll-behavior: smooth; }
 
 /* --- Opening splash --- */
 @keyframes splashLogoIn {
-  0%   { opacity: 0; transform: scale(0.7); filter: blur(10px); }
-  60%  { opacity: 1; transform: scale(1.05); filter: blur(0); }
-  100% { opacity: 1; transform: scale(1); filter: blur(0); }
+  0%   { opacity: 0; transform: scale(0.7) rotate(0deg); filter: blur(10px); }
+  60%  { opacity: 1; transform: scale(1.05) rotate(0deg); filter: blur(0); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); filter: blur(0); }
+}
+@keyframes splashLogoSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 @keyframes splashFadeUp {
   0%   { opacity: 0; transform: translateY(18px); }
@@ -338,11 +470,13 @@ html { scroll-behavior: smooth; }
   100% { width: 10rem; opacity: 1; }
 }
 
-.splash-logo     { animation: splashLogoIn  900ms ease-out both; }
-.splash-wordmark { animation: splashFadeUp  700ms ease-out 700ms both; }
-.splash-tagline  { animation: splashFadeUp  600ms ease-out 1100ms both; }
+.splash-logo     { animation: splashLogoIn 900ms ease-out both, splashLogoSpin 1.8s linear 900ms infinite; }
+.splash-wordmark { animation: splashFadeUp  800ms ease-out 600ms both; }
+.splash-tagline  { animation: splashFadeUp  600ms ease-out 1200ms both; }
 .splash-glow     { animation: splashGlowPulse 2.4s ease-in-out infinite; }
 .splash-bar      { animation: splashBarGrow 800ms ease-out 1400ms both; }
+.splash-estd     { animation: splashFadeUp  500ms ease-out 1500ms both; }
+.splash-lang     { animation: splashFadeUp  500ms ease-out 1800ms both; }
 
 .splash-ring {
   position: absolute;

@@ -1,41 +1,62 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Home from './pages/Home';
-import About from './pages/About';
-import Solutions from './pages/Solutions';
-import Pricing from './pages/Pricing';
-import Resources from './pages/Resources';
-import Contact from './pages/Contact';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Otp from './pages/Otp';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute   from './components/ProtectedRoute';
+
+import Home       from './pages/Home';
+import About      from './pages/About';
+import Solutions  from './pages/Solutions';
+import Pricing    from './pages/Pricing';
+import Resources  from './pages/Resources';
+import Contact    from './pages/Contact';
+import Login      from './pages/Login';
+import Signup     from './pages/Signup';
+import Otp        from './pages/Otp';
+import Dashboard       from './pages/Dashboard';
+import ForgotPassword  from './pages/ForgotPassword';
+import Questionnaire   from './pages/Questionnaire';
+
 import CustomCursor   from './components/CustomCursor';
 import ScrollProgress from './components/ScrollProgress';
 import OpeningSplash  from './components/OpeningSplash';
 
 export default function App() {
-  // splash renders on every fresh mount (full page reload). Client-side
-  // route changes don't remount App, so it plays exactly once per load —
-  // which is what we want for the boot animation.
   const [splashDone, setSplashDone] = useState(false);
 
   return (
     <BrowserRouter>
-      {!splashDone && <OpeningSplash onDone={() => setSplashDone(true)} />}
-      <ScrollProgress />
-      <CustomCursor />
-      <Routes>
-        <Route path="/"          element={<Home />} />
-        <Route path="/about"     element={<About />} />
-        <Route path="/solutions" element={<Solutions />} />
-        <Route path="/pricing"   element={<Pricing />} />
-        <Route path="/resources" element={<Resources />} />
-        <Route path="/contact"   element={<Contact />} />
-        <Route path="/login"     element={<Login />} />
-        <Route path="/signup"    element={<Signup />} />
-        <Route path="/otp"       element={<Otp />} />
-        <Route path="*"          element={<Navigate to="/" replace />} />
-      </Routes>
+      <AuthProvider>
+        {/* invisible reCAPTCHA mount point for phone auth */}
+        <div id="recaptcha-container" />
+
+        {!splashDone && <OpeningSplash onDone={() => setSplashDone(true)} />}
+        <ScrollProgress />
+        <CustomCursor />
+
+        <Routes>
+          {/* public */}
+          <Route path="/"          element={<Home />} />
+          <Route path="/about"     element={<About />} />
+          <Route path="/solutions" element={<Solutions />} />
+          <Route path="/pricing"   element={<Pricing />} />
+          <Route path="/resources" element={<Resources />} />
+          <Route path="/contact"   element={<Contact />} />
+          <Route path="/login"     element={<Login />} />
+          <Route path="/signup"    element={<Signup />} />
+          <Route path="/otp"              element={<Otp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+
+          {/* protected */}
+          <Route path="/questionnaire" element={
+            <ProtectedRoute><Questionnaire /></ProtectedRoute>
+          } />
+          <Route path="/dashboard" element={
+            <ProtectedRoute><Dashboard /></ProtectedRoute>
+          } />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

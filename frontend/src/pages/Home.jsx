@@ -67,6 +67,7 @@ export default function Home() {
           description="We envision creating the Indian Dalit Literature Corpus (IDLC) — the world's first comprehensive digital archive dedicated to preserving and amplifying Dalit literature. By leveraging AI, we aim to transform fragmented and inaccessible works into a structured, searchable, and enduring knowledge system."
           image={visionImg}
           imageAlt="Portrait of Dr. B.R. Ambedkar holding the Constitution"
+          imagePosition="object-[50%_22%]"
           chips={[
             { icon: Library,  text: 'Long-term preservation with accessible, searchable knowledge' },
             { icon: Sparkles, text: 'First AI-powered, structured archive of Dalit literature' },

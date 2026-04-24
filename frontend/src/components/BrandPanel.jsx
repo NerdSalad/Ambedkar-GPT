@@ -48,9 +48,25 @@ function FramedImage({ src, label, variant = 'login' }) {
   const [error, setError] = useState(false);
   const isSignup = variant === 'signup';
 
+  if (isSignup) {
+    return (
+      <div className="relative mx-auto w-full max-w-[520px]">
+        {src && !error ? (
+          <img
+            src={src}
+            alt={label}
+            onError={() => setError(true)}
+            className="h-full w-full object-contain"
+          />
+        ) : (
+          <ImagePlaceholder label={label} />
+        )}
+      </div>
+    );
+  }
+
   return (
-    <div className="relative mx-auto w-full max-w-[540px]">
-      {/* ambient glow behind the frame */}
+    <div className="relative mx-auto w-full max-w-[420px]">
       <div className="pointer-events-none absolute -inset-8 rounded-[30px] bg-[radial-gradient(circle,rgba(95,140,255,0.22)_0%,transparent_70%)] blur-xl" />
 
       <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-[#2a4375]/60 bg-[#0a1430] shadow-[0_26px_68px_rgba(0,0,0,0.55),inset_0_0_0_1px_rgba(115,160,240,0.08)]">
@@ -60,30 +76,16 @@ function FramedImage({ src, label, variant = 'login' }) {
             alt={label}
             onError={() => setError(true)}
             className="h-full w-full object-cover object-center"
-            style={{
-              // statue photo is flatter / lighter — nudge it toward the card tones
-              filter: isSignup
-                ? 'brightness(0.88) saturate(1.15) contrast(1.05) hue-rotate(-8deg)'
-                : 'brightness(0.98) saturate(1.05)',
-            }}
+            style={{ filter: 'brightness(0.98) saturate(1.05)' }}
           />
         ) : (
           <ImagePlaceholder label={label} />
         )}
 
-        {/* Full-frame navy tint — kills the signup statue's beige background and
-            gives the portrait a tiny extra warmth of the card palette. Heavier
-            on signup than login. */}
         <div
           className="pointer-events-none absolute inset-0"
-          style={{
-            background: isSignup
-              ? 'linear-gradient(180deg, rgba(10,20,48,0.35) 0%, rgba(10,20,48,0.15) 45%, rgba(5,10,28,0.55) 100%)'
-              : 'linear-gradient(180deg, rgba(10,20,48,0.12) 0%, rgba(10,20,48,0) 45%, rgba(5,10,28,0.45) 100%)',
-          }}
+          style={{ background: 'linear-gradient(180deg, rgba(10,20,48,0.12) 0%, rgba(10,20,48,0) 45%, rgba(5,10,28,0.45) 100%)' }}
         />
-
-        {/* edge highlights */}
         <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white/5 to-transparent" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#050a18]/70 to-transparent" />
       </div>
@@ -106,10 +108,10 @@ export default function BrandPanel({ variant = 'login' }) {
       {/* Middle zone: image + tagline as ONE tight group, vertically centered
           in whatever space remains after the logo. flex-1 claims the leftover
           height; justify-center pins the group to the middle of that span. */}
-      <div className="flex flex-1 flex-col items-center justify-center gap-6 py-6">
+      <div className="flex flex-1 flex-col items-center justify-center gap-0 py-2">
         <FramedImage src={src} label={label} variant={variant} />
 
-        <div className="text-center">
+        <div className={`text-center ${isSignup ? '-mt-8' : ''}`}>
           <p className="font-serif text-[15px] italic text-[#9fb5e0]">
             “Educate, Agitate, Organize”
           </p>

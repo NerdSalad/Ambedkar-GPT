@@ -55,16 +55,16 @@ export default function Navbar() {
           <img
             src={logoSrc}
             alt="AmbedkarGPT"
-            className="h-9 w-9 object-contain drop-shadow-[0_0_12px_rgba(63,159,255,0.55)]"
+            className="h-12 w-12 object-contain drop-shadow-[0_0_16px_rgba(63,159,255,0.65)]"
           />
-          <span className="text-[24px] font-semibold leading-none tracking-tight md:text-[28px]">
-            <span className="text-white">Amb</span>
-            <span className="ml-1 gradient-text-cyan">AI</span>
+          <span className="font-display text-[20px] font-bold leading-none tracking-tight md:text-[24px]">
+            <span className="text-white">Ambedkar</span>
+            <span className="gradient-text-cyan">GPT</span>
           </span>
         </Link>
 
         {/* ── Desktop nav ──────────────────────── */}
-        <nav className="hidden items-center gap-7 text-[11.5px] font-semibold tracking-[0.18em] lg:flex">
+        <nav className="hidden items-center gap-7 font-count text-[11.5px] font-medium tracking-[0.16em] lg:flex">
           {navItems.map((item) => {
             const isActive = active === item.sectionId;
             return (
@@ -72,16 +72,13 @@ export default function Navbar() {
                 key={item.sectionId}
                 type="button"
                 onClick={() => handleNav(item.sectionId)}
-                className={`relative transition-colors ${
+                className={`relative rounded-md px-3 py-1.5 transition-all duration-200 ${
                   isActive
-                    ? 'text-[#3f9fff]'
-                    : 'text-white/80 hover:text-[#8fc1ff]'
+                    ? 'bg-[#0d1a3a] border border-[#3f6bd4]/60 text-[#3f9fff] shadow-[0_0_12px_rgba(63,159,255,0.18)]'
+                    : 'border border-transparent text-white/75 hover:text-white hover:bg-white/[0.05] hover:border-white/10'
                 }`}
               >
                 {item.label}
-                {isActive && (
-                  <span className="pointer-events-none absolute -bottom-2 left-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-[#3f9fff] shadow-[0_0_10px_rgba(63,159,255,0.9)]" />
-                )}
               </button>
             );
           })}
@@ -91,13 +88,13 @@ export default function Navbar() {
         <div className="flex items-center gap-2 md:gap-4">
           <Link
             to="/login"
-            className="hidden h-10 items-center justify-center rounded-lg px-4 text-sm font-medium text-white/90 transition hover:text-white md:inline-flex"
+            className="hidden h-10 items-center justify-center rounded-lg px-4 font-count text-[13px] font-medium text-white/80 transition hover:text-white md:inline-flex"
           >
             Log In
           </Link>
           <Link
             to="/signup"
-            className="inline-flex h-10 items-center justify-center rounded-lg bg-gradient-to-r from-[#0a7dff] to-[#3a9fff] px-5 text-sm font-semibold text-white shadow-[0_6px_24px_rgba(17,122,255,0.45)] transition hover:-translate-y-0.5 hover:brightness-110"
+            className="inline-flex h-10 items-center justify-center rounded-lg bg-gradient-to-r from-[#0a7dff] to-[#3a9fff] px-5 font-count text-[13px] font-semibold text-white shadow-[0_6px_24px_rgba(17,122,255,0.45)] transition hover:-translate-y-0.5 hover:brightness-110"
           >
             Get Started
           </Link>
@@ -105,7 +102,7 @@ export default function Navbar() {
       </div>
 
       {/* ── Mobile scroll nav ─────────────────── */}
-      <nav className="mx-auto flex w-full max-w-[1440px] items-center gap-2 overflow-x-auto border-t border-[#10213f]/60 px-6 py-2.5 text-[11px] font-semibold tracking-[0.15em] lg:hidden">
+      <nav className="mx-auto flex w-full max-w-[1440px] items-center gap-2 overflow-x-auto border-t border-[#10213f]/60 px-6 py-2.5 font-count text-[11px] font-medium tracking-[0.15em] lg:hidden">
         {navItems.map((item) => {
           const isActive = active === item.sectionId;
           return (
