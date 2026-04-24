@@ -1,92 +1,222 @@
-import { Heart, Music2, Guitar, Clock, Star, Target } from 'lucide-react';
+import { useState } from 'react';
+import { Sparkles, ChevronDown, RotateCcw } from 'lucide-react';
 
-const PREFS = [
+// ─────────────────────────────────────────────────────────────────────
+// 7 onboarding questions (same ones from the Questionnaire page), shown
+// here as dropdowns so the user can tweak their generation profile
+// without leaving the generator.
+// ─────────────────────────────────────────────────────────────────────
+const QUESTIONS = [
   {
-    Icon: Heart,
-    iconColor: 'text-[#ff80b5]',
-    label: "What's your desired mood?",
-    value: 'Relaxed & Creative',
+    id: 'profile_user_role',
+    label: 'Your role',
+    hint: 'Voice & authority layer',
+    options: [
+      'Student / Researcher',
+      'Activist / Advocate',
+      'Educator / Teacher',
+      'Content Creator',
+      'Journalist / Writer',
+      'General Public',
+    ],
   },
   {
-    Icon: Music2,
-    iconColor: 'text-[#ffc94a]',
-    label: 'Preferred tempo?',
-    value: 'Medium (80-120 BPM)',
+    id: 'profile_tone',
+    label: 'Preferred tone',
+    hint: 'Word choice & emotional energy',
+    options: [
+      'Academic & Formal',
+      'Conversational & Friendly',
+      'Passionate & Motivational',
+      'Analytical & Objective',
+    ],
   },
   {
-    Icon: Guitar,
-    iconColor: 'text-[#b18aff]',
-    label: 'Preferred instruments?',
-    tags:  ['Piano', 'Strings', 'Synth'],
+    id: 'profile_target_audience',
+    label: 'Target audience',
+    hint: 'How the message is framed',
+    options: [
+      'General Public',
+      'Students & Youth',
+      'Academic Community',
+      'Policy Makers',
+      'Social Media Followers',
+      'Activists & Organizers',
+    ],
   },
   {
-    Icon: Clock,
-    iconColor: 'text-[#5bdbc4]',
-    label: 'Track duration?',
-    value: '3-5 minutes',
+    id: 'profile_primary_focus',
+    label: 'Primary focus',
+    hint: 'What the post is about',
+    options: [
+      'Constitutional Rights',
+      'Social Justice',
+      'Education & Learning',
+      'History & Legacy',
+      'Political Thought',
+      'Economic Equality',
+    ],
   },
   {
-    Icon: Star,
-    iconColor: 'text-[#ffb056]',
-    label: 'Complexity level?',
-    value: 'Moderate',
+    id: 'profile_ambedkarite_perspective',
+    label: 'Perspective',
+    hint: 'Your core ideological anchor',
+    options: [
+      'Radical Ambedkarite',
+      'Reformist Ambedkarite',
+      'Structural Analyst',
+      'Institutional Advocate',
+    ],
   },
   {
-    Icon: Target,
-    iconColor: 'text-[#6aa8ff]',
-    label: "What's the purpose?",
-    value: 'Background Music',
+    id: 'profile_content_length',
+    label: 'Content length',
+    hint: 'Controls output size',
+    options: [
+      'Short & Concise (tweets / captions)',
+      'Medium (paragraphs)',
+      'Long-form (essays / articles)',
+      'Detailed & Comprehensive',
+    ],
+  },
+  {
+    id: 'profile_call_to_action',
+    label: 'Call to action',
+    hint: 'Ending & intent of post',
+    options: [
+      'Passive Awareness',
+      'Mobilizing & Action-Oriented',
+      'Institutional Change',
+      'Educational & Informative',
+    ],
   },
 ];
 
-function PrefRow({ item }) {
-  const Icon = item.Icon;
+const DEFAULTS = Object.freeze({
+  profile_user_role:              'Content Creator',
+  profile_tone:                   'Conversational & Friendly',
+  profile_target_audience:        'Social Media Followers',
+  profile_primary_focus:          'Social Justice',
+  profile_ambedkarite_perspective:'Reformist Ambedkarite',
+  profile_content_length:         'Medium (paragraphs)',
+  profile_call_to_action:         'Educational & Informative',
+});
+
+// ─────────────────────────────────────────────────────────────────────
+// Dropdown — styled <select> with a custom chevron so it blends with
+// the rest of the dark UI on every browser.
+// ─────────────────────────────────────────────────────────────────────
+function Dropdown({ value, options, onChange }) {
   return (
-    <div className="flex gap-3">
-      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[#2a4375]/40 bg-[#0d1531]/70">
-        <Icon size={13} strokeWidth={1.9} className={item.iconColor} />
-      </div>
-      <div className="flex-1 leading-snug">
-        <div className="text-[12px] text-[#8b94b8]">{item.label}</div>
-        {item.tags ? (
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {item.tags.map((t) => (
-              <span
-                key={t}
-                className="rounded-lg border border-[#2a4375]/50 bg-[#12224d]/80 px-2.5 py-1 text-[11px] font-medium text-[#6aa8ff]"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <div className="mt-0.5 text-[13px] font-semibold text-white">{item.value}</div>
-        )}
-      </div>
+    <div className="relative">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full appearance-none rounded-lg border border-[#1e3260]/70 bg-[#0a1130]/80 py-2.5 pl-3 pr-9 text-[12.5px] font-medium text-white outline-none transition focus:border-[#3f9fff]/70 focus:shadow-[0_0_0_3px_rgba(63,159,255,0.15)] hover:border-[#3f9fff]/50"
+      >
+        {options.map((opt) => (
+          <option
+            key={opt}
+            value={opt}
+            className="bg-[#0a1130] text-white"
+          >
+            {opt}
+          </option>
+        ))}
+      </select>
+
+      <ChevronDown
+        size={13}
+        strokeWidth={2}
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#8b94b8]"
+      />
     </div>
   );
 }
 
-export default function PreferencesPanel() {
+// ─────────────────────────────────────────────────────────────────────
+// Main sidebar — mirrors the Claude / ChatGPT left-sidebar aesthetic:
+// flush-edge, no outer card border on the right, single divider on the
+// left, sticky to the viewport so the user can tweak preferences while
+// the main content scrolls.
+// ─────────────────────────────────────────────────────────────────────
+export default function PreferencesPanel({ value, onChange }) {
+  // Uncontrolled fallback so the component still works stand-alone.
+  const [local, setLocal] = useState(DEFAULTS);
+  const current = value ?? local;
+
+  function setField(id, v) {
+    const next = { ...current, [id]: v };
+    if (onChange) onChange(next); else setLocal(next);
+  }
+
+  function reset() {
+    if (onChange) onChange({ ...DEFAULTS }); else setLocal({ ...DEFAULTS });
+  }
+
   return (
     <aside
-      className="relative overflow-hidden rounded-2xl border p-6"
-      style={{
-        background: 'linear-gradient(180deg, rgba(16,25,55,0.80) 0%, rgba(10,16,38,0.80) 100%)',
-        borderColor: 'rgba(60,85,155,0.22)',
-      }}
+      className="relative flex h-full w-full flex-col border-l border-[#141d3a]/80 bg-gradient-to-b from-[#0a1024]/95 to-[#070b1c]/95"
     >
-      <div className="flex items-center gap-2">
-        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-[#ffc94a] to-[#ff7a2d] text-white shadow-[0_4px_14px_rgba(255,176,86,0.4)]">
-          <Star size={12} strokeWidth={0} fill="#fff" />
-        </span>
-        <h3 className="font-display text-[16px] font-semibold text-white">Your Preferences</h3>
-      </div>
-      <p className="mt-1 text-[11.5px] text-[#8b94b8]">Based on your initial setup</p>
+      {/* Header */}
+      <header className="sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-[#141d3a]/70 bg-[#070b1c]/90 px-5 py-5 backdrop-blur">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-[#3f9fff] to-[#7b5cff] text-white shadow-[0_4px_14px_rgba(63,159,255,0.4)]">
+              <Sparkles size={11} strokeWidth={2.2} />
+            </span>
+            <h3 className="font-display text-[15px] font-semibold text-white tracking-tight">
+              Your Preferences
+            </h3>
+          </div>
+          <p className="mt-1 text-[11px] text-[#8b94b8]">
+            Tune the voice behind every post
+          </p>
+        </div>
 
-      <div className="mt-5 space-y-4">
-        {PREFS.map((p) => <PrefRow key={p.label} item={p} />)}
+        <button
+          type="button"
+          onClick={reset}
+          title="Reset to defaults"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[#1e3260]/70 text-[#8b94b8] transition hover:border-[#3f9fff]/60 hover:text-white"
+        >
+          <RotateCcw size={11} strokeWidth={2} />
+        </button>
+      </header>
+
+      {/* Scrollable body */}
+      <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
+        {QUESTIONS.map((q, i) => (
+          <div key={q.id}>
+            <div className="flex items-baseline justify-between gap-2">
+              <label className="text-[11.5px] font-semibold uppercase tracking-wider text-[#6aa8ff]">
+                <span className="font-count text-[#8b94b8] mr-1">{i + 1}.</span>
+                {q.label}
+              </label>
+            </div>
+            <p className="mt-0.5 text-[10.5px] text-[#6b78a0] leading-snug">
+              {q.hint}
+            </p>
+            <div className="mt-2">
+              <Dropdown
+                value={current[q.id]}
+                options={q.options}
+                onChange={(v) => setField(q.id, v)}
+              />
+            </div>
+          </div>
+        ))}
       </div>
+
+      {/* Footer / summary */}
+      <footer className="border-t border-[#141d3a]/70 bg-[#070b1c]/85 px-5 py-4 text-[10.5px] text-[#6b78a0] leading-snug">
+        <span className="flex items-center gap-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e] shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
+          7 signals active
+        </span>
+      </footer>
     </aside>
   );
 }
+
+export { QUESTIONS as PREFERENCE_QUESTIONS, DEFAULTS as PREFERENCE_DEFAULTS };

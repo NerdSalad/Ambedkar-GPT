@@ -51,7 +51,9 @@
       "Bash(cp \"D:/Comdur/Ambedkar Gpt/resources/fonts/Count-MARmw.ttf\" \"D:/Comdur/Ambedkar Gpt/frontend/src/assets/fonts/Count.ttf\")",
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); p=d.get\\('packages',{}\\); print\\('firebase installed:', 'node_modules/firebase' in p\\); print\\('firebase-auth installed:', any\\(k.startswith\\('node_modules/@firebase/auth'\\) for k in p\\)\\)\")",
       "Bash(npx eslint *)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "Bash(git checkout *)",
+      "Bash(rm frontend/src/utils/userProfile.js)"
     ]
   }
 }
