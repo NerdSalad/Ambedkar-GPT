@@ -16,9 +16,10 @@ import Dashboard       from './pages/Dashboard';
 import ForgotPassword  from './pages/ForgotPassword';
 import Questionnaire   from './pages/Questionnaire';
 
-import CustomCursor   from './components/CustomCursor';
-import ScrollProgress from './components/ScrollProgress';
-import OpeningSplash  from './components/OpeningSplash';
+import CustomCursor        from './components/CustomCursor';
+import ScrollProgress      from './components/ScrollProgress';
+import OpeningSplash       from './components/OpeningSplash';
+import TransitionCurtain   from './components/TransitionCurtain';
 
 export default function App() {
   const [splashDone, setSplashDone] = useState(false);
@@ -30,6 +31,7 @@ export default function App() {
         <div id="recaptcha-container" />
 
         {!splashDone && <OpeningSplash onDone={() => setSplashDone(true)} />}
+        <TransitionCurtain />
         <ScrollProgress />
         <CustomCursor />
 
