@@ -15,6 +15,8 @@ import Otp        from './pages/Otp';
 import Dashboard       from './pages/Dashboard';
 import ForgotPassword  from './pages/ForgotPassword';
 import Questionnaire   from './pages/Questionnaire';
+import ServiceSelection          from './pages/ServiceSelection';
+import SocialMediaPostGenerator  from './pages/SocialMediaPostGenerator';
 
 import CustomCursor        from './components/CustomCursor';
 import ScrollProgress      from './components/ScrollProgress';
@@ -54,6 +56,12 @@ export default function App() {
           } />
           <Route path="/dashboard" element={
             <ProtectedRoute><Dashboard /></ProtectedRoute>
+          } />
+          <Route path="/generate" element={
+            <ProtectedRoute><ServiceSelection /></ProtectedRoute>
+          } />
+          <Route path="/generate/social-media" element={
+            <ProtectedRoute><SocialMediaPostGenerator /></ProtectedRoute>
           } />
 
           <Route path="*" element={<Navigate to="/" replace />} />

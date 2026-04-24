@@ -1,6 +1,8 @@
 import { Sparkles, Bell } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Topbar({ user }) {
+  const navigate = useNavigate();
   const name  = user?.name  ?? 'Alex Morgan';
   const tier  = user?.tier  ?? 'Premium';
   const initial = (name?.[0] ?? 'A').toUpperCase();
@@ -11,6 +13,7 @@ export default function Topbar({ user }) {
       <div className="flex-1 flex items-center">
         <button
           type="button"
+          onClick={() => navigate('/generate')}
           className="inline-flex items-center gap-2 rounded-full btn-gradient px-5 py-2.5 text-[13.5px] font-semibold text-white shadow-[0_8px_28px_rgba(17,122,255,0.4)]"
         >
           <Sparkles size={15} strokeWidth={2.1} />

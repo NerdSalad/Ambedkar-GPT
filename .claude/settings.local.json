@@ -48,7 +48,10 @@
       "Bash(curl -s -o /dev/null -w \"status=%{http_code}\\\\n\" http://127.0.0.1:5195/)",
       "Bash(mkdir -p \"D:/Comdur/Ambedkar Gpt/frontend/src/assets/fonts\")",
       "Bash(cp \"D:/Comdur/Ambedkar Gpt/resources/fonts/Count-rv9pp.otf\" \"D:/Comdur/Ambedkar Gpt/frontend/src/assets/fonts/Count.otf\")",
-      "Bash(cp \"D:/Comdur/Ambedkar Gpt/resources/fonts/Count-MARmw.ttf\" \"D:/Comdur/Ambedkar Gpt/frontend/src/assets/fonts/Count.ttf\")"
+      "Bash(cp \"D:/Comdur/Ambedkar Gpt/resources/fonts/Count-MARmw.ttf\" \"D:/Comdur/Ambedkar Gpt/frontend/src/assets/fonts/Count.ttf\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); p=d.get\\('packages',{}\\); print\\('firebase installed:', 'node_modules/firebase' in p\\); print\\('firebase-auth installed:', any\\(k.startswith\\('node_modules/@firebase/auth'\\) for k in p\\)\\)\")",
+      "Bash(npx eslint *)",
+      "Bash(node *)"
     ]
   }
 }
