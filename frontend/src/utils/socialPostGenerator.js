@@ -1,232 +1,268 @@
-/**
- * Platform + tone aware social media post generator.
- *
- * No external API — this is a deterministic-with-variation template engine.
- * Given a topic, a platform id (instagram | twitter | facebook | linkedin),
- * and a tone (Professional | Casual | Friendly | Inspirational), it returns
- * a post shaped for that platform's norms (length, hashtag style, emoji use,
- * paragraph breaks).
- *
- * Each call randomly picks one phrasing variant per slot so successive
- * "Generate Post" clicks produce different output.
- */
-
-// ─────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const capitalize = (s = '') => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+const normalizeTopic = (raw) => (raw || '').trim().replace(/\s+/g, ' ') || 'your topic';
 
-const capitalize = (s = '') =>
-  s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+// Detect Devanagari script → Hindi article
+function isHindi(text) {
+  return /[ऀ-ॿ]/.test(text || '');
+}
 
-const normalizeTopic = (raw) => {
-  const t = (raw || '').trim();
-  if (!t) return 'your topic';
-  return t.replace(/\s+/g, ' ');
-};
+// Map saved preference value → internal tone key
+function resolveTone(uiTone, prefTone) {
+  if (prefTone) {
+    const p = prefTone.toLowerCase();
+    if (p.includes('assertive') || p.includes('academic') || p.includes('formal') || p.includes('analytical')) return 'Professional';
+    if (p.includes('empathetic') || p.includes('friendly') || p.includes('conversational')) return 'Friendly';
+    if (p.includes('hopeful') || p.includes('motivational') || p.includes('passionate') || p.includes('inspirational')) return 'Inspirational';
+    if (p.includes('confrontational')) return 'Confrontational';
+  }
+  return uiTone || 'Professional';
+}
 
-const hashtagify = (raw) =>
-  raw
-    .trim()
-    .split(/\s+/)
-    .map((w) => w.replace(/[^a-zA-Z0-9]/g, ''))
-    .filter(Boolean)
-    .map((w, i) => (i === 0 ? w.toLowerCase() : capitalize(w)))
-    .join('');
+// Map saved content-length preference → post length variant
+function resolveLength(prefLength) {
+  if (!prefLength) return 'medium';
+  const p = prefLength.toLowerCase();
+  if (p.includes('ultra') || p.includes('tweet') || p.includes('caption') || p.includes('short')) return 'short';
+  if (p.includes('long') || p.includes('essay') || p.includes('article') || p.includes('extended') || p.includes('detailed') || p.includes('comprehensive')) return 'long';
+  return 'medium';
+}
 
-// ─────────────────────────────────────────────────────────────
-// Tone-specific phrase banks
-// ─────────────────────────────────────────────────────────────
-const TONE = {
+// Map saved call-to-action preference → closing style
+function resolveCta(prefCta) {
+  if (!prefCta) return 'engage';
+  const p = prefCta.toLowerCase();
+  if (p.includes('action') || p.includes('mobiliz')) return 'action';
+  if (p.includes('institutional') || p.includes('legal')) return 'institutional';
+  if (p.includes('awareness') || p.includes('passive')) return 'engage';
+  if (p.includes('educational') || p.includes('informative')) return 'educational';
+  return 'engage';
+}
+
+// ── Hindi phrase banks ─────────────────────────────────────────────────────────
+
+const HINDI = {
   Professional: {
     opener: [
-      'A closer look at',
-      'Key insights on',
-      'Unpacking',
-      'Perspectives on',
-      'The state of',
+      'डॉ. आंबेडकर के संविधान में स्पष्ट है —',
+      'एक महत्वपूर्ण विषय पर ध्यान दें:',
+      'सामाजिक न्याय की दिशा में:',
+      'तथ्य और संविधान की बात:',
     ],
     body: [
-      'Organizations that invest in {topic} consistently outperform peers on adaptability, retention, and long-term growth. The data makes the case clearly.',
-      'When leaders prioritize {topic}, teams gain clarity on what matters — and execution follows. It is less about strategy and more about discipline.',
-      'Progress in {topic} is rarely accidental. It is the product of deliberate choices made early, communicated widely, and revisited often.',
+      '{topic} — यह विषय हमारे संविधान की मूल भावना से सीधे जुड़ा है। डॉ. आंबेडकर ने हर नागरिक के लिए समान अधिकारों की नींव रखी थी।',
+      '{topic} को समझना आज की ज़रूरत है। सामाजिक परिवर्तन तथ्यों, संविधान और सामूहिक जागरूकता से आता है।',
+      'जब हम {topic} की बात करते हैं, तो स्पष्ट होता है कि संरचनात्मक बदलाव के बिना न्याय संभव नहीं।',
     ],
-    takeawaysLabel: 'Key takeaways',
-    takeaways: [
-      ['strategic clarity', 'cross-functional execution', 'measurable outcomes'],
-      ['sustainable growth', 'disciplined prioritization', 'stakeholder alignment'],
-      ['operational resilience', 'data-driven decisions', 'long-term value'],
-    ],
-    closers: [
-      'What has worked in your experience?',
-      'Curious what others are seeing — happy to compare notes.',
-      'Would love to hear how your team is approaching this.',
-    ],
+    cta: {
+      engage:       'आपकी राय साझा करें। संविधान हमारी ढाल है।',
+      action:       'इस जानकारी को आगे फैलाएं। जागरूकता पहला कदम है।',
+      institutional:'संबंधित अधिकारियों तक यह बात पहुँचाना आवश्यक है।',
+      educational:  'इसे पढ़ें, समझें और दूसरों को भी बताएं।',
+    },
+    hashtags: '#JaiBhim #SamajikNyay #Ambedkar #SamvidhanHamaraHai',
   },
-  Casual: {
+  Inspirational: {
     opener: [
-      "So here's the thing about",
-      "Quick thoughts on",
-      "Been thinking about",
-      "Real talk:",
-      "Hot take on",
+      'जागो, संगठित हो, संघर्ष करो —',
+      'बदलाव की शुरुआत हम से होती है:',
+      'डॉ. भीमराव आंबेडकर का संदेश आज भी प्रासंगिक है:',
+      'समानता का सपना, संघर्ष की राह:',
     ],
     body: [
-      'Honestly, {topic} is everywhere right now — and most of the hot takes are missing the point. The interesting stuff is in the details.',
-      "{topic} doesn't have to be complicated. Start small, ship something, learn from it, repeat. That's the whole playbook.",
-      "Everyone talks about {topic} like it's a silver bullet. It isn't — but paired with a bit of patience, it actually works.",
+      '{topic} — यह संघर्ष हमारी पहचान है। बाबासाहेब ने कहा था — "शिक्षित करो, संगठित करो, संघर्ष करो।" यही हमारा मार्ग है।',
+      '{topic} के लिए उठ खड़े होना इस पीढ़ी का कर्तव्य है। हर आवाज़ मायने रखती है, हर कदम इतिहास बनाता है।',
+      '{topic} पर लड़ाई तब तक जारी रहेगी जब तक समाज में सच्ची समानता नहीं आती। बाबासाहेब का सपना हमें आगे ले जाए।',
     ],
-    takeawaysLabel: 'tl;dr',
-    takeaways: [
-      ['keep it simple', 'ship early', 'iterate often'],
-      ['listen more', 'ship faster', 'stay curious'],
-      ['start small', 'learn loudly', 'stay human'],
-    ],
-    closers: [
-      'What am I missing?',
-      'Drop your thoughts below 👇',
-      'Agree? Disagree? Let me know.',
-    ],
+    cta: {
+      engage:       'जय भीम! ✊🔵 इसे शेयर करें।',
+      action:       'शिक्षित करो, संगठित करो, संघर्ष करो! 💙',
+      institutional:'संस्थागत बदलाव के लिए एकजुट हों।',
+      educational:  'बाबासाहेब की विचारधारा फैलाओ — यही सच्ची श्रद्धांजलि है।',
+    },
+    hashtags: '#JaiBhim #Ambedkar #DalitPride #SamajikParivatan #NayaBharat',
   },
   Friendly: {
     opener: [
-      'Hey friends — a little something on',
-      'Sharing a quick note about',
-      "Here's a warm take on",
-      'Just wanted to share some thoughts on',
+      'दोस्तों, एक ज़रूरी बात —',
+      'थोड़ा समय निकालकर इस पर सोचें:',
+      'आज की एक अहम जानकारी आपके साथ:',
+      'मिलकर सीखें, मिलकर बढ़ें —',
     ],
     body: [
-      "I've been learning a lot about {topic} lately, and one thing stands out: the people who grow fastest are the ones who ask the best questions.",
-      'Every time I dig into {topic}, I find another small idea that makes a big difference. Wanted to share a few of those today.',
-      "There's something really lovely about watching a community engage with {topic} — so much to learn from each other.",
+      '{topic} — इस मुद्दे को समझना हम सभी के लिए ज़रूरी है। जब हम मिलकर सोचते हैं, तो बेहतर रास्ते निकलते हैं।',
+      '{topic} के बारे में जानकर एहसास होता है कि जागरूकता ही पहला कदम है। आइए इसे आगे बढ़ाएं।',
+      '{topic} की बात आते ही मन में एक उम्मीद जागती है — कि बदलाव मुमकिन है।',
     ],
-    takeawaysLabel: 'Three things worth holding onto',
-    takeaways: [
-      ['be curious', 'be generous', 'be patient'],
-      ['listen well', 'share openly', 'show up consistently'],
-      ['ask more', 'assume less', 'celebrate small wins'],
+    cta: {
+      engage:       'आपके विचार नीचे साझा करें। 💬',
+      action:       'इसे उन लोगों तक पहुंचाएं जिन्हें ज़रूरत है।',
+      institutional:'मिलकर सही कदम उठाएं।',
+      educational:  'साथ मिलकर जागरूकता फैलाएं। 💙',
+    },
+    hashtags: '#JaiBhim #Ambedkar #Jagrukta #SamajikNyay',
+  },
+  Confrontational: {
+    opener: [
+      'सवाल पूछना ज़रूरी है —',
+      'यह व्यवस्था कब बदलेगी?',
+      'सच्चाई से मुँह मत मोड़ो:',
+      'जवाब चाहिए — अभी:',
     ],
-    closers: [
-      'Sending good vibes to everyone building something today. 💙',
-      'Hope this helps someone today!',
-      "What's been on your mind lately?",
+    body: [
+      '{topic} — यह सिर्फ एक खबर नहीं, यह हमारी व्यवस्था का आईना है। कब तक यह चलता रहेगा?',
+      '{topic} पर जो हो रहा है वह संविधान की भावना के विरुद्ध है। बाबासाहेब की विरासत की रक्षा के लिए आवाज़ उठानी होगी।',
+      'जब {topic} जैसी घटनाएं होती हैं, तो चुप रहना एक अपराध है। बोलो — क्योंकि तुम्हारी आवाज़ मायने रखती है।',
     ],
+    cta: {
+      engage:       'जवाबदेही माँगो। चुप मत रहो। ✊',
+      action:       'यह स्वीकार्य नहीं। आवाज़ उठाओ। #JaiBhim',
+      institutional:'संविधान की रक्षा हमारा कर्तव्य है। कानूनी रास्ता अपनाओ।',
+      educational:  'तथ्य जानो, सवाल पूछो, जवाब लो।',
+    },
+    hashtags: '#JaiBhim #Ambedkar #Accountability #DalitRights #SamajikNyay',
+  },
+};
+
+function buildHindi(topic, tone, length, cta) {
+  const T = HINDI[tone] ?? HINDI.Professional;
+  const opener = pick(T.opener);
+  const body = pick(T.body).replace('{topic}', topic);
+  const closer = T.cta[cta] ?? T.cta.engage;
+
+  if (length === 'short') {
+    return [opener, '', body.split('।')[0] + '।', '', closer, '', T.hashtags].join('\n');
+  }
+  if (length === 'long') {
+    const body2 = pick(T.body).replace('{topic}', topic);
+    return [opener, '', body, '', body2, '', closer, '', T.hashtags].join('\n');
+  }
+  return [opener, '', body, '', closer, '', T.hashtags].join('\n');
+}
+
+// ── English phrase banks ───────────────────────────────────────────────────────
+
+const ENGLISH = {
+  Professional: {
+    opener: ['A closer look at', 'Key insights on', 'Unpacking', 'Perspectives on', 'The state of'],
+    body: [
+      'Progress in {topic} requires deliberate action, not just awareness. The systems around us shape outcomes — and those systems can be changed.',
+      'When communities understand {topic} deeply, they gain the clarity and tools to demand accountability. Knowledge is the first step.',
+      '{topic} sits at the heart of constitutional rights and social equity. Engaging with it is not optional — it is a civic duty.',
+    ],
+    cta: {
+      engage:       'What are your thoughts? Share in the comments.',
+      action:       'Share this. Spread awareness. Every voice counts.',
+      institutional:'Reach out to your representatives. Demand structural change.',
+      educational:  'Read, share, and discuss. Education is power.',
+    },
+    hashtags: (t) => `#JaiBhim #Ambedkar #SocialJustice #${hashtagify(t)} #Constitution`,
   },
   Inspirational: {
     opener: [
       'Never underestimate the power of',
       'The best time to commit to',
-      "Here's what I've learned about",
-      'If you take one thing from today, let it be this —',
+      "Here's what we must remember about",
+      'The struggle continues —',
     ],
     body: [
-      '{topic} is not a destination — it is a practice. Show up for it on the days nobody is watching, and the results will compound quietly.',
-      'The people who go furthest in {topic} are not the most talented. They are the ones who refuse to stop — long after the applause has faded.',
-      'Every giant leap in {topic} began as a quiet, uncertain first step. Take yours today.',
+      '{topic} is not a destination — it is a practice. Show up for justice on the days nobody is watching, and results will compound quietly.',
+      'The people who go furthest in the fight around {topic} are not the most talented. They are the ones who refuse to stop.',
+      'Every giant leap toward justice in {topic} began as a quiet, uncertain first step. Take yours today.',
     ],
-    takeawaysLabel: 'Remember',
-    takeaways: [
-      ['start before you are ready', 'stay longer than is comfortable', 'trust the compounding'],
-      ['consistency beats intensity', 'progress over perfection', 'keep the faith'],
-      ['small steps, big direction', 'patience is a strategy', 'the work is the reward'],
+    cta: {
+      engage:       'Keep going. 🔵 Jai Bhim!',
+      action:       'Educate. Organise. Agitate. ✊',
+      institutional:'Demand institutional change. Now.',
+      educational:  'Share Ambedkar\'s teachings. That is the real tribute.',
+    },
+    hashtags: (t) => `#JaiBhim #Ambedkar #DalitPride #${hashtagify(t)} #SocialChange`,
+  },
+  Friendly: {
+    opener: [
+      'Friends — a quick but important thought on',
+      'Sharing something worth reading about',
+      'Here\'s a warm but honest look at',
+      'Just wanted to share some thoughts on',
     ],
-    closers: [
-      'Keep going. 🚀',
-      'Your future self is watching.',
-      'One step at a time — but every single day.',
+    body: [
+      "I've been thinking about {topic} a lot — and one thing is clear: the communities most affected deserve to be heard loudest.",
+      "Every time I look into {topic}, I find another layer worth understanding. Sharing a few thoughts today.",
+      "There's something powerful about communities coming together around {topic} — so much wisdom and strength in unity.",
     ],
+    cta: {
+      engage:       'Drop your thoughts below. 💬',
+      action:       'Pass this on to someone who needs it.',
+      institutional:'Let\'s push for change together.',
+      educational:  'Share the knowledge. 💙',
+    },
+    hashtags: (t) => `#JaiBhim #Ambedkar #Awareness #${hashtagify(t)}`,
+  },
+  Confrontational: {
+    opener: [
+      'We need to talk about',
+      'This cannot be ignored:',
+      'The system has failed — again — on',
+      'Accountability starts with naming:',
+    ],
+    body: [
+      '{topic} is not just a headline. It is a mirror held up to structures that have failed for generations. How long do we look away?',
+      '{topic} demands more than sympathy. It demands structural accountability. Dr Ambedkar built a Constitution for this exact reason.',
+      'When {topic} happens, silence is complicity. Our Constitution grants us rights — and the duty to defend them.',
+    ],
+    cta: {
+      engage:       'Demand accountability. Do not stay silent. ✊',
+      action:       'This is unacceptable. Raise your voice. #JaiBhim',
+      institutional:'Use the legal framework. File complaints. Demand justice.',
+      educational:  'Know your rights. Question everything.',
+    },
+    hashtags: (t) => `#JaiBhim #Ambedkar #Accountability #DalitRights #${hashtagify(t)}`,
   },
 };
 
-// ─────────────────────────────────────────────────────────────
-// Platform-specific layout
-// ─────────────────────────────────────────────────────────────
+const hashtagify = (raw) =>
+  (raw || '')
+    .trim()
+    .split(/\s+/)
+    .map((w) => w.replace(/[^a-zA-Z0-9ऀ-ॿ]/g, ''))
+    .filter(Boolean)
+    .map((w, i) => (i === 0 ? w : capitalize(w)))
+    .join('');
 
-function buildTwitter(topic, tone) {
-  const T = TONE[tone] ?? TONE.Professional;
-  const hook   = pick(T.opener);
-  const punch  = pick(T.body).replace('{topic}', topic);
-  const tag    = hashtagify(topic);
-  // Twitter caps around ~280; keep it tight (no takeaways).
-  let out = `${hook} ${topic}.\n\n${punch}\n\n#${tag} #${tone.toLowerCase()}`;
-  if (out.length > 275) out = out.slice(0, 272).trimEnd() + '…';
-  return out;
+function buildEnglish(topic, tone, length, cta) {
+  const T = ENGLISH[tone] ?? ENGLISH.Professional;
+  const opener = pick(T.opener);
+  const body = pick(T.body).replace('{topic}', topic);
+  const closer = T.cta[cta] ?? T.cta.engage;
+  const tags = typeof T.hashtags === 'function' ? T.hashtags(topic) : T.hashtags;
+
+  if (length === 'short') {
+    return [`${opener} ${topic}.`, '', body.split('.')[0] + '.', '', closer, '', tags].join('\n');
+  }
+  if (length === 'long') {
+    const body2 = pick(T.body).replace('{topic}', topic);
+    return [`${opener} ${topic}.`, '', body, '', body2, '', closer, '', tags].join('\n');
+  }
+  return [`${opener} ${topic}.`, '', body, '', closer, '', tags].join('\n');
 }
 
-function buildInstagram(topic, tone) {
-  const T = TONE[tone] ?? TONE.Professional;
-  const hook   = pick(T.opener);
-  const punch  = pick(T.body).replace('{topic}', topic);
-  const closer = pick(T.closers);
-  const tag    = hashtagify(topic);
-  // Instagram: shorter paragraphs, more emoji, lots of hashtags.
-  return [
-    `✨ ${hook} ${topic} ✨`,
-    '',
-    punch,
-    '',
-    closer,
-    '',
-    `#${tag} #${tone.toLowerCase()} #content #growth #creators #inspiration`,
-  ].join('\n');
-}
-
-function buildFacebook(topic, tone) {
-  const T = TONE[tone] ?? TONE.Professional;
-  const hook   = pick(T.opener);
-  const punch  = pick(T.body).replace('{topic}', topic);
-  const takes  = pick(T.takeaways);
-  const closer = pick(T.closers);
-  const tag    = hashtagify(topic);
-  // Facebook: conversational, medium length.
-  return [
-    `${hook} ${topic} —`,
-    '',
-    punch,
-    '',
-    `${T.takeawaysLabel}:`,
-    ...takes.map((t) => `• ${t}`),
-    '',
-    closer,
-    '',
-    `#${tag} #${tone.toLowerCase()}`,
-  ].join('\n');
-}
-
-function buildLinkedIn(topic, tone) {
-  const T = TONE[tone] ?? TONE.Professional;
-  const hook   = pick(T.opener);
-  const punch  = pick(T.body).replace('{topic}', topic);
-  const takes  = pick(T.takeaways);
-  const closer = pick(T.closers);
-  const tag    = hashtagify(topic);
-  // LinkedIn: long-form, structured.
-  return [
-    `${hook} ${topic}.`,
-    '',
-    punch,
-    '',
-    `${T.takeawaysLabel}:`,
-    ...takes.map((t) => `  - ${t}`),
-    '',
-    closer,
-    '',
-    `#${tag} #${tone.toLowerCase()} #leadership #growth`,
-  ].join('\n');
-}
-
-const BUILDERS = {
-  twitter:   buildTwitter,
-  instagram: buildInstagram,
-  facebook:  buildFacebook,
-  linkedin:  buildLinkedIn,
-};
+// ── Public API ─────────────────────────────────────────────────────────────────
 
 /**
- * Generate a post for a given topic/platform/tone.
+ * Generate a social post.
+ * @param {object} opts
+ * @param {string} opts.topic         - The article topic/headline
+ * @param {string} opts.tone          - UI-selected tone (fallback if no preference)
+ * @param {object} [opts.preferences] - User's saved profile answers { question_id: answer }
  */
-export function generateSocialPost({ topic, platform, tone }) {
+export function generateSocialPost({ topic, tone, preferences = {} }) {
   const t = normalizeTopic(topic);
-  const build = BUILDERS[platform] ?? buildLinkedIn;
-  return build(t, tone);
+  const effectiveTone   = resolveTone(tone, preferences.profile_tone);
+  const effectiveLength = resolveLength(preferences.profile_content_length);
+  const effectiveCta    = resolveCta(preferences.profile_call_to_action);
+
+  if (isHindi(t)) {
+    return buildHindi(t, effectiveTone, effectiveLength, effectiveCta);
+  }
+  return buildEnglish(t, effectiveTone, effectiveLength, effectiveCta);
 }

@@ -1,17 +1,18 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '../firebase';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { friendlyError } from '../context/AuthContext';
 import AuthLayout    from '../components/AuthLayout';
 import AnimatedInput from '../components/AnimatedInput';
 import PrimaryButton from '../components/PrimaryButton';
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+
 export default function ForgotPassword() {
-  const [email, setEmail]       = useState('');
-  const [error, setError]       = useState('');
-  const [sent, setSent]         = useState(false);
-  const [loading, setLoading]   = useState(false);
+  const navigate = useNavigate();
+  const [email, setEmail]     = useState('');
+  const [error, setError]     = useState('');
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -19,10 +20,22 @@ export default function ForgotPassword() {
     setError('');
     setLoading(true);
     try {
-      await sendPasswordResetEmail(auth, email.trim());
-      setSent(true);
+      const { data } = await axios.post(`${BASE_URL}/auth/resend-otp`, {
+        target:  email.trim().toLowerCase(),
+        channel: 'email',
+        purpose: 'signup_verify',
+      });
+      navigate('/otp', {
+        state: {
+          identifier: email.trim().toLowerCase(),
+          type:       'email',
+          mode:       'login',
+          password:   '',
+          devOtp:     data?.dev_otp || '',
+        },
+      });
     } catch (err) {
-      setError(friendlyError(err.code));
+      setError(friendlyError(err));
     } finally {
       setLoading(false);
     }
@@ -36,9 +49,7 @@ export default function ForgotPassword() {
             Forgot Password?
           </h1>
           <p className="mt-3 text-[14px]" style={{ color: '#8b94b8' }}>
-            {sent
-              ? 'Check your inbox for the reset link.'
-              : "Enter your email and we'll send you a link to reset your password."}
+            Enter your email and we&apos;ll send you a verification code to confirm it&apos;s you.
           </p>
         </div>
 
@@ -48,24 +59,18 @@ export default function ForgotPassword() {
           </div>
         )}
 
-        {sent ? (
-          <div className="rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-400">
-            Password reset email sent to <span className="font-medium">{email}</span>. Click the link in your inbox to reset your password.
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-            <AnimatedInput
-              placeholders={['Enter your Email']}
-              value={email}
-              onChange={(e) => { setEmail(e.target.value); setError(''); }}
-              label="Email"
-              error={error}
-            />
-            <PrimaryButton type="submit" disabled={loading}>
-              {loading ? 'Sending…' : 'Send Reset Link'}
-            </PrimaryButton>
-          </form>
-        )}
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          <AnimatedInput
+            placeholders={['Enter your Email']}
+            value={email}
+            onChange={(e) => { setEmail(e.target.value); setError(''); }}
+            label="Email"
+            error={error}
+          />
+          <PrimaryButton type="submit" disabled={loading}>
+            {loading ? 'Sending…' : 'Send Verification Code'}
+          </PrimaryButton>
+        </form>
 
         <p className="text-center text-sm" style={{ color: '#8b94b8' }}>
           Remember your password?{' '}

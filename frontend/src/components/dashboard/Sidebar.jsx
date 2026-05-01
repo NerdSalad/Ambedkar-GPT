@@ -1,7 +1,7 @@
+import { useNavigate } from 'react-router-dom';
 import {
   LayoutGrid,
   Search,
-  Image as ImageIcon,
   SlidersHorizontal,
   Bookmark,
   BarChart3,
@@ -11,9 +11,8 @@ import {
 
 const NAV = [
   { id: 'dashboard',  label: 'Dashboard',        Icon: LayoutGrid },
-  { id: 'searches',   label: 'Search History',   Icon: Search },
-  { id: 'images',     label: 'Image Generation', Icon: ImageIcon },
-  { id: 'prefs',      label: 'Preferences',      Icon: SlidersHorizontal },
+  { id: 'searches',   label: 'Post History',      Icon: Search, route: '/posts' },
+  { id: 'prefs',      label: 'Preferences',      Icon: SlidersHorizontal, route: '/preferences' },
   { id: 'saved',      label: 'Saved Prompts',    Icon: Bookmark },
   { id: 'analytics',  label: 'Analytics',        Icon: BarChart3 },
   { id: 'profile',    label: 'Profile',          Icon: User },
@@ -21,6 +20,7 @@ const NAV = [
 ];
 
 export default function Sidebar({ active = 'dashboard', onSelect }) {
+  const navigate = useNavigate();
   return (
     <aside
       className="hidden lg:flex flex-col w-[232px] shrink-0 border-r border-[#141d3a]/70"
@@ -28,14 +28,18 @@ export default function Sidebar({ active = 'dashboard', onSelect }) {
     >
       {/* brand */}
       <div className="px-6 pt-7 pb-9">
-        <div className="flex items-center gap-2.5">
+        <button
+          type="button"
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-2.5 transition-opacity hover:opacity-85"
+        >
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#3f9fff] to-[#7b5cff] shadow-[0_0_18px_rgba(79,107,255,0.35)]">
             <span className="font-display text-[13px] font-bold text-white">AI</span>
           </div>
           <span className="font-display text-[16px] font-semibold tracking-tight gradient-text-blue">
             AI Dashboard
           </span>
-        </div>
+        </button>
       </div>
 
       {/* nav */}
@@ -47,7 +51,7 @@ export default function Sidebar({ active = 'dashboard', onSelect }) {
             <button
               key={item.id}
               type="button"
-              onClick={() => onSelect?.(item.id)}
+              onClick={() => { if (item.route) { navigate(item.route); } else { onSelect?.(item.id); } }}
               className={[
                 'group relative flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13.5px] font-medium transition-all duration-200',
                 isActive

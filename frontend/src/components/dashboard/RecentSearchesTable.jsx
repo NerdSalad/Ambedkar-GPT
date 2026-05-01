@@ -1,66 +1,102 @@
 import Card, { CardTitle } from './Card';
-import { Clock } from 'lucide-react';
+import { Clock, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const ROWS = [
-  { q: 'Lorem Epsum Lorem Espum Lorem', date: 'Apr 17, 2026', cat: 'Coding',     mins: 5,  status: 'Completed' },
-  { q: 'Lorem Epsum Lorem Espum Lorem', date: 'Apr 16, 2026', cat: 'Design',     mins: 8,  status: 'Completed' },
-  { q: 'Lorem Epsum Lorem Espum Lorem', date: 'Apr 16, 2026', cat: 'AI Tools',   mins: 12, status: 'Completed' },
-  { q: 'Lorem Epsum Lorem Espum Lorem', date: 'Apr 15, 2026', cat: 'Coding',     mins: 6,  status: 'Completed' },
-  { q: 'Lorem Epsum Lorem Espum Lorem', date: 'Apr 15, 2026', cat: 'Technology', mins: 9,  status: 'Completed' },
-];
-
-const CAT_TINTS = {
-  Coding:     'bg-[#231738]/80 text-[#b18aff] border-[#4a3375]/60',
-  Design:     'bg-[#3a1a2a]/80 text-[#ff80b5] border-[#6a2a46]/60',
-  'AI Tools': 'bg-[#0f2a3d]/80 text-[#6ad6ff] border-[#1d4a66]/60',
-  Technology: 'bg-[#0e2e2d]/80 text-[#5bdbc4] border-[#1c4a48]/60',
+const STATUS_STYLE = {
+  published: 'border-[#1c4a33]/70 bg-[#0e2a1d]/80 text-[#5bdb90]',
+  draft:     'border-[#2a3a1a]/70 bg-[#1a2510]/80 text-[#a3c55b]',
+  archived:  'border-[#3a2a1a]/70 bg-[#261a0e]/80 text-[#c5935b]',
 };
 
-export default function RecentSearchesTable() {
+function formatDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+export default function RecentSearchesTable({ posts = [], loading = false }) {
+  const navigate = useNavigate();
+  const recent = posts.slice(0, 8);
+
   return (
     <Card>
-      <CardTitle>Recent Searches</CardTitle>
+      <div className="flex items-center justify-between">
+        <CardTitle>Recent Posts</CardTitle>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => navigate('/posts')}
+            className="text-[12px] text-[#6aa8ff] underline underline-offset-2 hover:opacity-80 transition-opacity"
+          >
+            View all →
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/generate')}
+            className="text-[12px] text-[#6aa8ff] underline underline-offset-2 hover:opacity-80 transition-opacity"
+          >
+            Generate new
+          </button>
+        </div>
+      </div>
 
       <div className="mt-5 w-full overflow-x-auto">
-        <table className="w-full min-w-[760px] text-left">
-          <thead>
-            <tr className="text-[11.5px] uppercase tracking-wider text-[#6b78a0]">
-              <th className="py-3 pr-4 font-medium">Search Query</th>
-              <th className="py-3 pr-4 font-medium">Date</th>
-              <th className="py-3 pr-4 font-medium">Category</th>
-              <th className="py-3 pr-4 font-medium">Time Spent</th>
-              <th className="py-3 pr-4 font-medium">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ROWS.map((r, i) => (
-              <tr
-                key={i}
-                className="border-t border-[#1a254a]/40 text-[13px] text-[#c3ccea] transition-colors hover:bg-[#0e1736]/60"
-              >
-                <td className="py-3.5 pr-4 font-medium text-white">{r.q}</td>
-                <td className="py-3.5 pr-4 text-[#8b94b8]">{r.date}</td>
-                <td className="py-3.5 pr-4">
-                  <span className={`rounded-lg border px-2.5 py-1 text-[11.5px] font-medium ${CAT_TINTS[r.cat] ?? CAT_TINTS.Technology}`}>
-                    {r.cat}
-                  </span>
-                </td>
-                <td className="py-3.5 pr-4">
-                  <span className="inline-flex items-center gap-1.5 text-[#8b94b8]">
-                    <Clock size={12} strokeWidth={1.8} />
-                    {r.mins} min
-                  </span>
-                </td>
-                <td className="py-3.5 pr-4">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#1c4a33]/70 bg-[#0e2a1d]/80 px-2.5 py-1 text-[11.5px] font-medium text-[#5bdb90]">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
-                    {r.status}
-                  </span>
-                </td>
+        {loading ? (
+          <p className="py-8 text-center text-[13px] text-[#6b78a0]">Loading…</p>
+        ) : recent.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <FileText size={32} strokeWidth={1.4} className="text-[#2a3566] mb-3" />
+            <p className="text-[13px] text-[#6b78a0]">No posts generated yet.</p>
+            <button
+              type="button"
+              onClick={() => navigate('/generate')}
+              className="mt-4 rounded-xl btn-gradient px-6 py-2.5 text-[13px] font-semibold text-white"
+            >
+              Generate your first post
+            </button>
+          </div>
+        ) : (
+          <table className="w-full min-w-[640px] text-left">
+            <thead>
+              <tr className="text-[11.5px] uppercase tracking-wider text-[#6b78a0]">
+                <th className="py-3 pr-4 font-medium">Content Preview</th>
+                <th className="py-3 pr-4 font-medium">Date</th>
+                <th className="py-3 pr-4 font-medium">Hashtags</th>
+                <th className="py-3 pr-4 font-medium">Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {recent.map((p) => (
+                <tr
+                  key={p.id}
+                  className="border-t border-[#1a254a]/40 text-[13px] text-[#c3ccea] transition-colors hover:bg-[#0e1736]/60"
+                >
+                  <td className="py-3.5 pr-4 font-medium text-white max-w-[300px]">
+                    <span className="line-clamp-1">{p.content}</span>
+                  </td>
+                  <td className="py-3.5 pr-4 text-[#8b94b8] whitespace-nowrap">
+                    <span className="inline-flex items-center gap-1.5">
+                      <Clock size={12} strokeWidth={1.8} />
+                      {formatDate(p.created_at)}
+                    </span>
+                  </td>
+                  <td className="py-3.5 pr-4 text-[#8b94b8]">
+                    {p.hashtags?.length ? (
+                      <span className="line-clamp-1 text-[12px]">
+                        {p.hashtags.slice(0, 3).map((h) => `#${h}`).join(' ')}
+                      </span>
+                    ) : '—'}
+                  </td>
+                  <td className="py-3.5 pr-4">
+                    <span className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11.5px] font-medium capitalize ${STATUS_STYLE[p.status] ?? STATUS_STYLE.draft}`}>
+                      <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                      {p.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </Card>
   );

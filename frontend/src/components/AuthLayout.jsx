@@ -3,7 +3,7 @@ import BackgroundDecorations from './BackgroundDecorations';
 
 export default function AuthLayout({ children, brandSide = 'right', brandVariant = 'login' }) {
   const brandPanel = (
-    <div className="w-full md:w-[52%] relative">
+    <div className="hidden md:block md:w-[52%] relative">
       <BrandPanel variant={brandVariant} />
     </div>
   );

@@ -163,22 +163,6 @@ export default function ServiceSelection() {
           ))}
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 flex flex-col items-center gap-5">
-          <p className="font-count text-[12.5px] text-[#6b78a0]">
-            {count === 0 ? 'No services selected' : `${count} service${count > 1 ? 's' : ''} selected`}
-          </p>
-
-          <button
-            type="button"
-            onClick={handleContinue}
-            disabled={count === 0}
-            className="inline-flex items-center gap-2 rounded-full btn-gradient px-8 py-3.5 text-[14px] font-semibold text-white shadow-[0_12px_32px_rgba(17,122,255,0.4)] transition disabled:pointer-events-none disabled:opacity-40"
-          >
-            Continue to Setup
-            <ArrowRight size={15} strokeWidth={2.1} />
-          </button>
-        </div>
       </main>
     </div>
   );

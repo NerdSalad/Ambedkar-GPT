@@ -1,37 +1,11 @@
 import Card, { CardTitle } from './Card';
-import { Bookmark, RotateCcw } from 'lucide-react';
+import { Send } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const PROMPTS = [
-  {
-    title: 'Creative Writing Assistant',
-    desc:  'Generate creative story ideas and plot structures',
-    tag:   { label: 'Writing',   tint: 'yellow' },
-  },
-  {
-    title: 'Code Review Helper',
-    desc:  'Analyze code and suggest improvements',
-    tag:   { label: 'Coding',    tint: 'purple' },
-  },
-  {
-    title: 'Marketing Copy Generator',
-    desc:  'Create compelling marketing content and headlines',
-    tag:   { label: 'Marketing', tint: 'pink'   },
-  },
-  {
-    title: 'Data Analysis Query',
-    desc:  'Extract insights from datasets and visualizations',
-    tag:   { label: 'Analytics', tint: 'teal'   },
-  },
-];
+function PostCard({ post }) {
+  const preview = post.content?.slice(0, 120) + (post.content?.length > 120 ? '…' : '');
+  const date = new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-const TINTS = {
-  yellow: 'bg-[#2e2614]/80 text-[#ffc94a] border-[#5a4a1a]/60',
-  purple: 'bg-[#231738]/80 text-[#b18aff] border-[#4a3375]/60',
-  pink:   'bg-[#3a1a2a]/80 text-[#ff80b5] border-[#6a2a46]/60',
-  teal:   'bg-[#0e2e2d]/80 text-[#5bdbc4] border-[#1c4a48]/60',
-};
-
-function PromptCard({ p }) {
   return (
     <div
       className="group relative flex flex-col justify-between rounded-xl border p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#3f9fff]/40"
@@ -41,36 +15,53 @@ function PromptCard({ p }) {
       }}
     >
       <div className="flex items-start justify-between gap-3">
-        <h3 className="font-display text-[15px] font-semibold text-white">{p.title}</h3>
-        <Bookmark size={15} strokeWidth={1.8} className="text-[#6aa8ff]" fill="#6aa8ff" />
+        <p className="text-[13px] leading-snug text-[#c3ccea] line-clamp-3">{preview}</p>
+        <Send size={14} strokeWidth={1.8} className="shrink-0 text-[#6aa8ff]" />
       </div>
 
-      <p className="mt-2.5 text-[12.5px] leading-snug text-[#8b94b8]">{p.desc}</p>
-
-      <div className="mt-5 flex items-center justify-between">
-        <span className={`rounded-lg border px-2.5 py-1 text-[11.5px] font-medium ${TINTS[p.tag.tint]}`}>
-          {p.tag.label}
-        </span>
-        <button
-          type="button"
-          className="inline-flex items-center gap-1.5 text-[12px] font-medium text-[#6aa8ff] transition hover:text-[#9fc7ff]"
-        >
-          <RotateCcw size={12} strokeWidth={2} />
-          Reuse
-        </button>
+      <div className="mt-4 flex items-center justify-between">
+        <span className="text-[11px] text-[#6b78a0]">{date}</span>
+        {post.hashtags?.length > 0 && (
+          <span className="text-[11.5px] text-[#6aa8ff]">
+            {post.hashtags.slice(0, 2).map((h) => `#${h}`).join(' ')}
+          </span>
+        )}
       </div>
     </div>
   );
 }
 
-export default function SavedPromptsGrid() {
+export default function SavedPromptsGrid({ posts = [] }) {
+  const navigate = useNavigate();
+
   return (
     <Card>
-      <CardTitle>Saved Prompts</CardTitle>
-
-      <div className="mt-5 grid gap-4 sm:grid-cols-2">
-        {PROMPTS.map((p) => <PromptCard key={p.title} p={p} />)}
+      <div className="flex items-center justify-between">
+        <CardTitle>Published Posts</CardTitle>
+        {posts.length > 0 && (
+          <span className="text-[12px] text-[#6b78a0]">{posts.length} post{posts.length !== 1 ? 's' : ''}</span>
+        )}
       </div>
+
+      {posts.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-10 text-center">
+          <Send size={32} strokeWidth={1.4} className="text-[#2a3566] mb-3" />
+          <p className="text-[13px] text-[#6b78a0]">No published posts yet.</p>
+          <button
+            type="button"
+            onClick={() => navigate('/generate')}
+            className="mt-4 rounded-xl btn-gradient px-6 py-2.5 text-[13px] font-semibold text-white"
+          >
+            Create &amp; publish a post
+          </button>
+        </div>
+      ) : (
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          {posts.slice(0, 4).map((p) => (
+            <PostCard key={p.id} post={p} />
+          ))}
+        </div>
+      )}
     </Card>
   );
 }

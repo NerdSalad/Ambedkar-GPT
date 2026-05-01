@@ -43,15 +43,17 @@ export default function StatCard({ label, value, delta, deltaLabel = 'vs last mo
         {value}
       </div>
 
-      <div
-        className={`mt-2.5 inline-flex items-center gap-1 font-count text-[11px] font-semibold ${
-          positive ? 'text-[#22c55e]' : 'text-[#ef4444]'
-        }`}
-      >
-        <TrendingUp size={11} strokeWidth={2.4} className={positive ? '' : 'rotate-180'} />
-        {delta}
-        <span className="font-medium text-[#6b78a0]"> {deltaLabel}</span>
-      </div>
+      {delta && (
+        <div
+          className={`mt-2.5 inline-flex items-center gap-1 font-count text-[11px] font-semibold ${
+            positive ? 'text-[#22c55e]' : 'text-[#ef4444]'
+          }`}
+        >
+          <TrendingUp size={11} strokeWidth={2.4} className={positive ? '' : 'rotate-180'} />
+          {delta}
+          <span className="font-medium text-[#6b78a0]"> {deltaLabel}</span>
+        </div>
+      )}
     </div>
   );
 }

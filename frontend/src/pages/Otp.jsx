@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { sendEmailVerification } from 'firebase/auth';
-import { useAuth, friendlyError, toE164 } from '../context/AuthContext';
-import { auth }       from '../firebase';
-import AuthLayout     from '../components/AuthLayout';
-import PrimaryButton  from '../components/PrimaryButton';
+import { useAuth, friendlyError } from '../context/AuthContext';
+import { resendOtp as resendOtpApi } from '../api/auth';
+import { useCurtain } from '../context/CurtainContext';
+import AuthLayout    from '../components/AuthLayout';
+import PrimaryButton from '../components/PrimaryButton';
 
 const OTP_LENGTH = 6;
 
@@ -31,7 +31,7 @@ function OtpBoxes({ value, onChange, error }) {
       e.preventDefault();
       onChange(digits.map((d, j) => (j === i ? '' : d)).join(''));
       if (i > 0) focusBox(i - 1);
-    } else if (e.key === 'ArrowLeft'  && i > 0)            focusBox(i - 1);
+    } else if (e.key === 'ArrowLeft'  && i > 0)              focusBox(i - 1);
     else if   (e.key === 'ArrowRight' && i < OTP_LENGTH - 1) focusBox(i + 1);
   }
 
@@ -83,7 +83,7 @@ function ResendTimer({ onResend }) {
   }, [seconds]);
   return (
     <p className="text-center text-sm" style={{ color: '#8b94b8' }}>
-      Didn't receive it?{' '}
+      Didn&apos;t receive it?{' '}
       {seconds > 0 ? (
         <span style={{ color: '#6b7db3' }}>Resend in {seconds}s</span>
       ) : (
@@ -97,102 +97,27 @@ function ResendTimer({ onResend }) {
   );
 }
 
-// ── Email verification sub-page ──────────────────────────────────────────────
-function EmailVerify({ masked, mode }) {
-  const navigate = useNavigate();
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState('');
-  const [resendMsg, setResendMsg] = useState('');
-
-  async function handleCheckVerified() {
-    setLoading(true);
-    setError('');
-    try {
-      await auth.currentUser?.reload();
-      if (auth.currentUser?.emailVerified) {
-        navigate(mode === 'signup' ? '/questionnaire' : '/dashboard', { replace: true });
-      } else {
-        setError('Email not verified yet — please click the link in your inbox first.');
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleResend() {
-    try {
-      await sendEmailVerification(auth.currentUser);
-      setResendMsg('Verification email resent!');
-      setTimeout(() => setResendMsg(''), 4000);
-    } catch (_) {}
-  }
-
-  return (
-    <div className="space-y-7">
-      <div>
-        <h1 className="text-3xl font-bold text-white">Check Your Email</h1>
-        <p className="mt-2 text-sm leading-relaxed" style={{ color: '#8b94b8' }}>
-          We've sent a verification link to{' '}
-          <span className="font-medium" style={{ color: '#c8d8ff' }}>{masked}</span>.
-          Click the link to verify your account, then come back here.
-        </p>
-      </div>
-
-      {error && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">{error}</div>
-      )}
-      {resendMsg && (
-        <div className="rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-400">{resendMsg}</div>
-      )}
-
-      <PrimaryButton onClick={handleCheckVerified} disabled={loading}>
-        {loading ? 'Checking…' : "I've verified — continue"}
-      </PrimaryButton>
-
-      <p className="text-center text-sm" style={{ color: '#8b94b8' }}>
-        Didn't receive it?{' '}
-        <button type="button" onClick={handleResend}
-          className="underline underline-offset-2 hover:opacity-80 font-medium"
-          style={{ color: '#6b8aff' }}>
-          Resend email
-        </button>
-      </p>
-
-      <p className="text-center text-sm">
-        <Link to="/signup" className="underline underline-offset-2 hover:opacity-80" style={{ color: '#6b8aff' }}>
-          Go back
-        </Link>
-      </p>
-    </div>
-  );
-}
-
-// ── Main OTP page ─────────────────────────────────────────────────────────────
 export default function Otp() {
-  const { state }   = useLocation();
-  const navigate    = useNavigate();
-  const { verifyPhoneOtp, sendPhoneOtp } = useAuth();
+  const { state }          = useLocation();
+  const navigate           = useNavigate();
+  const { go: curtainGo }  = useCurtain();
+  const { verifyOtp } = useAuth();
 
   const identifier = state?.identifier || '';
-  const type       = state?.type       || 'phone';
-  const mode       = state?.mode       || 'signup';
+  const type       = state?.type       || 'email';  // 'email' | 'phone'
+  const mode       = state?.mode       || 'signup'; // 'signup' | 'login'
+  const password   = state?.password   || '';
+  const devOtp     = state?.devOtp     || '';       // auto-filled in dev mode
 
   useEffect(() => {
     if (!identifier) navigate('/signup', { replace: true });
   }, [identifier, navigate]);
 
   const { label, masked } = describeIdentifier(identifier);
-  const [otp, setOtp]         = useState('');
+  const [otp, setOtp]           = useState(devOtp);
   const [otpError, setOtpError] = useState('');
   const [loading, setLoading]   = useState(false);
-
-  if (type === 'email') {
-    return (
-      <AuthLayout brandSide="left" brandVariant="signup">
-        <EmailVerify masked={masked} mode={mode} />
-      </AuthLayout>
-    );
-  }
+  const [resendMsg, setResendMsg] = useState('');
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -200,10 +125,11 @@ export default function Otp() {
     setOtpError('');
     setLoading(true);
     try {
-      await verifyPhoneOtp(otp);
-      navigate(mode === 'signup' ? '/questionnaire' : '/dashboard', { replace: true });
+      const purpose = mode === 'signup' ? 'signup_verify' : 'login_verify';
+      await verifyOtp(otp, identifier, type, purpose);
+      curtainGo(mode === 'signup' ? '/questionnaire' : '/dashboard', { replace: true });
     } catch (err) {
-      setOtpError(friendlyError(err.code ?? err.message));
+      setOtpError(friendlyError(err));
     } finally {
       setLoading(false);
     }
@@ -212,23 +138,42 @@ export default function Otp() {
   async function handleResend() {
     setOtp('');
     setOtpError('');
+    setResendMsg('');
     try {
-      await sendPhoneOtp(toE164(identifier));
+      const purpose = mode === 'signup' ? 'signup_verify' : 'login_verify';
+      const data = await resendOtpApi({ target: identifier, channel: type, purpose });
+      setResendMsg('A new code has been sent!');
+      if (data?.dev_otp) setOtp(data.dev_otp);
+      setTimeout(() => setResendMsg(''), 4000);
     } catch (err) {
-      setOtpError(friendlyError(err.code));
+      setOtpError(friendlyError(err));
     }
   }
+
+  const title  = type === 'email' ? 'Verify Your Email' : 'Verify Your Phone';
+  const backTo = mode === 'login' ? '/login' : '/signup';
 
   return (
     <AuthLayout brandSide="left" brandVariant="signup">
       <div className="space-y-7">
         <div>
-          <h1 className="text-3xl font-bold text-white">Verify Your Phone</h1>
+          <h1 className="text-3xl font-bold text-white">{title}</h1>
           <p className="mt-2 text-sm leading-relaxed" style={{ color: '#8b94b8' }}>
-            We've sent a 6-digit code to your {label}{' '}
+            We&apos;ve sent a 6-digit code to your {label}{' '}
             <span className="font-medium" style={{ color: '#c8d8ff' }}>{masked}</span>.
           </p>
+          {devOtp && (
+            <p className="mt-1 text-xs rounded-md px-3 py-1.5 inline-block" style={{ backgroundColor: '#0d2b1a', color: '#4ade80', border: '1px solid #166534' }}>
+              Dev mode — OTP auto-filled: {devOtp}
+            </p>
+          )}
         </div>
+
+        {resendMsg && (
+          <div className="rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-400">
+            {resendMsg}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           <OtpBoxes value={otp} onChange={(v) => { setOtp(v); setOtpError(''); }} error={otpError} />
@@ -240,10 +185,8 @@ export default function Otp() {
         <ResendTimer onResend={handleResend} />
 
         <p className="text-center text-sm" style={{ color: '#8b94b8' }}>
-          Wrong number?{' '}
-          <Link to={mode === 'login' ? '/login' : '/signup'}
-            className="underline underline-offset-2 hover:opacity-80 font-medium"
-            style={{ color: '#6b8aff' }}>
+          Wrong {type === 'email' ? 'email' : 'number'}?{' '}
+          <Link to={backTo} className="underline underline-offset-2 hover:opacity-80 font-medium" style={{ color: '#6b8aff' }}>
             Go back
           </Link>
         </p>

@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Topbar({ user }) {
   const navigate = useNavigate();
-  const name  = user?.name  ?? 'Alex Morgan';
-  const tier  = user?.tier  ?? 'Premium';
+  const name  = user?.name  ?? '—';
   const initial = (name?.[0] ?? 'A').toUpperCase();
 
   return (
@@ -35,7 +34,6 @@ export default function Topbar({ user }) {
         <div className="flex items-center gap-3">
           <div className="text-right leading-tight">
             <div className="text-[13.5px] font-semibold text-white">{name}</div>
-            <div className="font-count text-[11px] text-[#8b94b8]">{tier}</div>
           </div>
           <div className="relative">
             <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[#3f9fff]/50 bg-gradient-to-br from-[#2b3e7a] to-[#1a2654] text-[13px] font-semibold text-white shadow-[0_0_14px_rgba(63,159,255,0.25)]">

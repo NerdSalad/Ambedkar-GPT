@@ -27,20 +27,33 @@ const USE_CASES = [
 
 function UseCaseCard({ icon: Icon, title, body }) {
   return (
-    <div className="group glass-card hover-lift relative overflow-hidden p-7 md:p-8">
-      {/* corner glow accent */}
-      <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-[#3f9fff]/15 blur-3xl" />
+    <div className="group relative">
+      {/* outer glow — same radial shape as the inner bloom, extends beyond the card */}
+      <div
+        className="pointer-events-none absolute -inset-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        style={{ background: 'radial-gradient(ellipse at 50% 55%, rgba(63,159,255,0.28) 0%, rgba(63,159,255,0.10) 45%, transparent 70%)', filter: 'blur(18px)' }}
+      />
 
-      <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#2a4375]/80 bg-[#0c1735]/80 text-[#5fa5ff] shadow-[0_0_22px_rgba(63,159,255,0.25)]">
-        <Icon size={19} strokeWidth={1.8} />
-      </span>
+      <div className="glass-card hover-lift relative overflow-hidden p-7 transition-all duration-500 hover:border-[#3f9fff]/30 md:p-8">
+        {/* inner illumination — card surface lights up */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+          style={{ background: 'radial-gradient(ellipse at 50% 60%, rgba(63,159,255,0.22) 0%, rgba(63,159,255,0.10) 40%, transparent 72%)' }}
+        />
+        {/* corner glow accent */}
+        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-[#3f9fff]/15 blur-3xl" />
 
-      <h3 className="mt-6 text-[20px] font-semibold text-white md:text-[22px]">
-        {title}
-      </h3>
-      <p className="mt-3 max-w-[420px] text-[14px] leading-relaxed text-[#a6b9d6]">
-        {body}
-      </p>
+        <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#2a4375]/80 bg-[#0c1735]/80 text-[#5fa5ff] shadow-[0_0_22px_rgba(63,159,255,0.25)]">
+          <Icon size={19} strokeWidth={1.8} />
+        </span>
+
+        <h3 className="mt-6 text-[20px] font-semibold text-white md:text-[22px]">
+          {title}
+        </h3>
+        <p className="mt-3 max-w-[420px] text-[14px] leading-relaxed text-[#a6b9d6]">
+          {body}
+        </p>
+      </div>
     </div>
   );
 }

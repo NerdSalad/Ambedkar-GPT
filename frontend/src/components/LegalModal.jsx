@@ -64,7 +64,7 @@ const CONTENT = {
       },
       {
         heading: '7. Your Rights',
-        body: 'You have the right to access, correct, or delete your personal data. To exercise these rights, contact us at targetkumph@gmail.com. We will respond to verified requests within 30 days.',
+        body: 'You have the right to access, correct, or delete your personal data. To exercise these rights, contact us at hello@ambedkargpt.in. We will respond to verified requests within 30 days.',
       },
       {
         heading: '8. Changes to This Policy',

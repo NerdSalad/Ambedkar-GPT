@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { useAuth, friendlyError } from '../context/AuthContext';
+import { useCurtain } from '../context/CurtainContext';
 import AuthLayout    from '../components/AuthLayout';
 import AnimatedInput from '../components/AnimatedInput';
 import PasswordInput from '../components/PasswordInput';
@@ -11,9 +12,10 @@ import GoogleButton  from '../components/GoogleButton';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { loginWithEmail, loginWithGoogle, sendPhoneOtp } = useAuth();
+  const { go: curtainGo } = useCurtain();
+  const { loginWithEmail, loginWithGoogle } = useAuth();
 
-  const [mode, setMode]         = useState('email'); // 'email' | 'phone'
+  const [mode, setMode]         = useState('email');
   const [email, setEmail]       = useState('');
   const [phone, setPhone]       = useState('');
   const [password, setPassword] = useState('');
@@ -24,11 +26,12 @@ export default function Login() {
   function validate() {
     const e = {};
     if (mode === 'email') {
-      if (!email.trim()) e.email = 'Email is required.';
+      if (!email.trim()) e.email    = 'Email is required.';
       if (!password)     e.password = 'Password is required.';
     } else {
-      if (!phone)                         e.phone = 'Phone number is required.';
+      if (!phone)                          e.phone = 'Phone number is required.';
       else if (!isValidPhoneNumber(phone)) e.phone = 'Please enter a valid phone number.';
+      // No password for phone — OTP is sent automatically
     }
     return e;
   }
@@ -41,28 +44,36 @@ export default function Login() {
     setAuthError('');
     setLoading(true);
     try {
-      if (mode === 'phone') {
-        await sendPhoneOtp(phone);
-        navigate('/otp', { state: { identifier: phone, type: 'phone', mode: 'login' } });
+      const identifier = mode === 'phone' ? phone : email.trim();
+      const data = await loginWithEmail(identifier, mode === 'phone' ? null : password);
+      if (data?.otp_required) {
+        navigate('/otp', {
+          state: {
+            identifier: data.otp_target || identifier,
+            type:   mode,
+            mode:   'login',
+            password: '',
+            devOtp: data.dev_otp || '',
+          },
+        });
       } else {
-        await loginWithEmail(email.trim(), password);
-        navigate('/dashboard', { replace: true });
+        curtainGo('/dashboard', { replace: true });
       }
     } catch (err) {
-      setAuthError(friendlyError(err.code));
+      setAuthError(friendlyError(err));
     } finally {
       setLoading(false);
     }
   }
 
-  async function handleGoogle() {
+  async function handleGoogle(tokenResponse) {
     setAuthError('');
     setLoading(true);
     try {
-      await loginWithGoogle();
-      navigate('/dashboard', { replace: true });
+      await loginWithGoogle(tokenResponse.access_token);
+      curtainGo('/dashboard', { replace: true });
     } catch (err) {
-      setAuthError(friendlyError(err.code));
+      setAuthError(friendlyError(err));
     } finally {
       setLoading(false);
     }
@@ -72,6 +83,7 @@ export default function Login() {
     setMode(m);
     setErrors({});
     setAuthError('');
+    setPassword('');
   }
 
   return (
@@ -113,33 +125,40 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           {mode === 'email' ? (
-            <>
-              <AnimatedInput
-                placeholders={['Enter your Email']}
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); setErrors((p) => ({ ...p, email: '' })); setAuthError(''); }}
-                label="Email"
-                error={errors.email}
-              />
-              <div className="space-y-1">
-                <PasswordInput
-                  value={password}
-                  onChange={(e) => { setPassword(e.target.value); setErrors((p) => ({ ...p, password: '' })); }}
-                  error={errors.password}
-                />
-                <div className="flex justify-end">
-                  <Link to="/forgot-password" className="text-xs underline underline-offset-2 hover:opacity-80 transition-opacity" style={{ color: '#6b8aff' }}>
-                    Forgot password?
-                  </Link>
-                </div>
-              </div>
-            </>
+            <AnimatedInput
+              placeholders={['Enter your Email']}
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); setErrors((p) => ({ ...p, email: '' })); setAuthError(''); }}
+              label="Email"
+              error={errors.email}
+            />
           ) : (
             <PhoneField
               value={phone}
               onChange={(v) => { setPhone(v ?? ''); setErrors((p) => ({ ...p, phone: '' })); setAuthError(''); }}
               error={errors.phone}
             />
+          )}
+
+          {mode === 'email' && (
+            <div className="space-y-1">
+              <PasswordInput
+                value={password}
+                onChange={(e) => { setPassword(e.target.value); setErrors((p) => ({ ...p, password: '' })); }}
+                error={errors.password}
+              />
+              <div className="flex justify-end">
+                <Link to="/forgot-password" className="text-xs underline underline-offset-2 hover:opacity-80 transition-opacity" style={{ color: '#6b8aff' }}>
+                  Forgot password?
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {mode === 'phone' && (
+            <p className="text-xs" style={{ color: '#8b94b8' }}>
+              We&apos;ll send a one-time code to your number to log you in.
+            </p>
           )}
 
           <PrimaryButton type="submit" disabled={loading}>
@@ -153,10 +172,14 @@ export default function Login() {
           <div className="flex-1 h-px" style={{ backgroundColor: '#2a3566' }} />
         </div>
 
-        <GoogleButton onClick={handleGoogle} disabled={loading} />
+        <GoogleButton
+          onSuccess={handleGoogle}
+          onError={() => setAuthError('Google sign-in failed. Please try again.')}
+          disabled={loading}
+        />
 
         <p className="text-center text-sm" style={{ color: '#8b94b8' }}>
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link to="/signup" className="underline underline-offset-2 hover:opacity-80 transition-opacity font-medium" style={{ color: '#6b8aff' }}>
             Sign Up
           </Link>

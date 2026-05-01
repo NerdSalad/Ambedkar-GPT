@@ -1,28 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import logoSrc from '../assets/images/logo-animation.png';
-
-const AUTH_PATHS = ['/login', '/signup', '/otp', '/forgot-password'];
-const APP_PATHS  = ['/dashboard', '/questionnaire'];
+import { useCurtain } from '../context/CurtainContext';
 
 export default function TransitionCurtain() {
-  const location = useLocation();
-  const prevPath = useRef(location.pathname);
-  const [visible, setVisible] = useState(false);
+  const { active } = useCurtain();
 
-  useEffect(() => {
-    const from = prevPath.current;
-    const to   = location.pathname;
-    prevPath.current = to;
-
-    if (AUTH_PATHS.includes(from) && APP_PATHS.includes(to)) {
-      setVisible(true);
-      const t = setTimeout(() => setVisible(false), 950);
-      return () => clearTimeout(t);
-    }
-  }, [location.pathname]);
-
-  if (!visible) return null;
+  if (!active) return null;
 
   return (
     <div

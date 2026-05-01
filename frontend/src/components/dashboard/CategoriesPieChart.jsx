@@ -1,13 +1,10 @@
 import Card, { CardTitle } from './Card';
 
-const SLICES = [
-  { label: 'Technology', pct: 25, color: '#6aa8ff' },
-  { label: 'AI Tools',   pct: 21, color: '#4f8dff' },
-  { label: 'Education',  pct: 17, color: '#86bbff' },
-  { label: 'Coding',     pct: 15, color: '#2d5fd1' },
-  { label: 'Design',     pct: 13, color: '#3a76e0' },
-  { label: 'Research',   pct: 10, color: '#1e449c' },
-];
+const STATUS_COLORS = {
+  draft:     '#6aa8ff',
+  published: '#22c55e',
+  archived:  '#ffb056',
+};
 
 const CX = 250, CY = 200, R = 130;
 
@@ -15,15 +12,42 @@ function polar(angle) {
   const rad = ((angle - 90) * Math.PI) / 180;
   return { x: CX + R * Math.cos(rad), y: CY + R * Math.sin(rad) };
 }
-
 function labelPos(angle) {
   const rad = ((angle - 90) * Math.PI) / 180;
   const dist = R + 28;
   return { x: CX + dist * Math.cos(rad), y: CY + dist * Math.sin(rad) };
 }
 
-export default function CategoriesPieChart() {
-  const arcs = SLICES.reduce((acc, s) => {
+function buildSlices(posts) {
+  const counts = { draft: 0, published: 0, archived: 0 };
+  for (const p of posts) {
+    if (counts[p.status] !== undefined) counts[p.status]++;
+  }
+  const total = posts.length || 1;
+  return Object.entries(counts)
+    .filter(([, v]) => v > 0)
+    .map(([label, v]) => ({
+      label: label.charAt(0).toUpperCase() + label.slice(1),
+      pct: Math.round((v / total) * 100),
+      color: STATUS_COLORS[label],
+    }));
+}
+
+export default function CategoriesPieChart({ posts = [] }) {
+  const slices = buildSlices(posts);
+
+  if (!slices.length) {
+    return (
+      <Card className="h-full">
+        <CardTitle>Posts by Status</CardTitle>
+        <div className="flex h-[280px] items-center justify-center">
+          <p className="text-[13px] text-[#6b78a0]">No posts yet.</p>
+        </div>
+      </Card>
+    );
+  }
+
+  const arcs = slices.reduce((acc, s) => {
     const start = acc.angle;
     const end   = start + (s.pct / 100) * 360;
     const p1 = polar(start);
@@ -41,36 +65,17 @@ export default function CategoriesPieChart() {
 
   return (
     <Card className="h-full">
-      <CardTitle>Most Searched Categories</CardTitle>
-
+      <CardTitle>Posts by Status</CardTitle>
       <div className="mt-2 flex items-center justify-center">
         <svg viewBox="0 0 500 400" className="w-full max-w-[520px] h-[340px]">
-          {/* slices */}
           {arcs.map((a) => (
-            <path
-              key={a.label}
-              d={a.d}
-              fill={a.color}
-              stroke="#0a1130"
-              strokeWidth="2.5"
-              strokeLinejoin="round"
-            />
+            <path key={a.label} d={a.d} fill={a.color} stroke="#0a1130" strokeWidth="2.5" strokeLinejoin="round" />
           ))}
-
-          {/* labels */}
           {arcs.map((a) => {
             const { x, y } = labelPos(a.mid);
             const anchor = x < CX - 10 ? 'end' : x > CX + 10 ? 'start' : 'middle';
             return (
-              <text
-                key={a.label + '-lbl'}
-                x={x} y={y}
-                fontSize="12"
-                fontWeight="500"
-                fill="#6aa3ff"
-                textAnchor={anchor}
-                style={{ fontFamily: 'Inter, sans-serif' }}
-              >
+              <text key={a.label + '-lbl'} x={x} y={y} fontSize="12" fontWeight="500" fill={a.color} textAnchor={anchor} style={{ fontFamily: 'Inter, sans-serif' }}>
                 {a.label} {a.pct}%
               </text>
             );

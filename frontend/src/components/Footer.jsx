@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import logoSrc from '../assets/images/logo-animation.png';
+import indiaAiLogo      from '../assets/images/indiaai-logo.png';
+import digitalIndiaLogo from '../assets/images/digital-india-logo.png';
 
 const ABOUT_LINKS = [
   { label: 'API',                         href: '#' },
@@ -17,21 +19,6 @@ const SOCIAL_LINKS = [
   { label: 'YouTube',  href: '#' },
 ];
 
-function StorePill({ iconClass, caption, name }) {
-  return (
-    <a
-      href="#"
-      aria-label={`Download on ${name}`}
-      className="group flex items-center gap-3 rounded-xl border border-[#2a4375]/70 bg-[#0c1735]/70 px-5 py-3 transition hover:-translate-y-0.5 hover:border-[#4a78c8]/90 hover:bg-[#101e42]/80"
-    >
-      <i className={`${iconClass} text-[24px] text-white transition group-hover:text-[#8fc1ff]`} aria-hidden="true" />
-      <div className="flex flex-col leading-tight">
-        <span className="text-[10.5px] tracking-wide text-[#7aa6e5]">{caption}</span>
-        <span className="-mt-0.5 text-[15px] font-semibold text-white">{name}</span>
-      </div>
-    </a>
-  );
-}
 
 export default function Footer() {
   return (
@@ -42,7 +29,7 @@ export default function Footer() {
 
       <div className="relative mx-auto max-w-[1180px] px-6 py-16 md:py-20">
         {/* ─── Main grid: brand | About | Stay tuned! | Get the App ─── */}
-        <div className="grid gap-12 md:grid-cols-[1.25fr_1fr_1fr_1.1fr]">
+        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-[1.25fr_1fr_1fr_1.1fr] md:gap-12">
           {/* Brand block */}
           <div>
             <img
@@ -104,19 +91,19 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Get the App column */}
+          {/* Trusted By column */}
           <div>
-            <h4 className="text-[16px] font-semibold text-white">Get the App</h4>
-            <div className="mt-6 flex flex-col gap-3">
-              <StorePill
-                iconClass="fa-brands fa-apple"
-                caption="Download on the"
-                name="App Store"
+            <h4 className="text-[16px] font-semibold text-white">Trusted By</h4>
+            <div className="mt-6 flex flex-col gap-6">
+              <img
+                src={indiaAiLogo}
+                alt="INDIAai"
+                className="h-14 w-auto object-contain drop-shadow-[0_0_20px_rgba(63,159,255,0.25)]"
               />
-              <StorePill
-                iconClass="fa-brands fa-google-play"
-                caption="GET IT ON"
-                name="Google Play"
+              <img
+                src={digitalIndiaLogo}
+                alt="Digital India"
+                className="h-14 w-auto object-contain drop-shadow-[0_0_20px_rgba(63,159,255,0.25)]"
               />
             </div>
           </div>

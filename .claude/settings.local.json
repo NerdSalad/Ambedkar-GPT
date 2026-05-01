@@ -53,7 +53,23 @@
       "Bash(npx eslint *)",
       "Bash(node *)",
       "Bash(git checkout *)",
-      "Bash(rm frontend/src/utils/userProfile.js)"
+      "Bash(rm frontend/src/utils/userProfile.js)",
+      "Bash(python3 -c \"from PIL import Image; img = Image.open\\('D:/Comdur/Ambedkar Gpt/frontend/public/logo.png'\\); print\\(img.size\\)\")",
+      "Bash(python -c \"from PIL import Image; img = Image.open\\('D:/Comdur/Ambedkar Gpt/frontend/public/logo.png'\\); print\\(img.size\\)\")",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(python3 *)",
+      "PowerShell(cmd /c \"rmdir /s /q \"\"D:\\\\Comdur\\\\social_media_post_generator\"\"\"; Write-Output \"Done\")",
+      "PowerShell(Get-Process *)",
+      "PowerShell(git clone *)",
+      "Bash(grep -o \"MONGODB_URI=[^\\\\\"\\\\\\\\\\\\\\\\]*\" \"C:/Users/krish/.claude/projects/D--Comdur-Ambedkar-Gpt/3fd622db-d9bb-4e92-881c-d67d29e25e39.jsonl\")",
+      "Bash(xargs grep *)",
+      "PowerShell(Invoke-RestMethod -Uri \"http://localhost:8000/api/v1/health\" -Method GET | ConvertTo-Json)",
+      "Bash(python -c ' *)",
+      "Bash(findstr /i \"requests httpx\" \"D:\\\\Comdur\\\\Ambedkar Gpt\\\\backend\\\\requirements.txt\")",
+      "Bash(findstr /i \"requests httpx\" \"D:\\\\Comdur\\\\Ambedkar Gpt\\\\backend\\\\pyproject.toml\")",
+      "Bash(findstr *)"
     ]
   }
 }

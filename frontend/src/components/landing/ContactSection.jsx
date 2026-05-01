@@ -1,61 +1,34 @@
 import { Mail, MapPin, Send, UserPlus } from 'lucide-react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
 import SectionLabel from './SectionLabel';
 
-// ─── Dotted "world map" card — decorative graphic for the channels column ───
-// A grid of dots with a handful lit up to suggest continents / network nodes.
-function WorldMapCard() {
-  const rows = 9;
-  const cols = 22;
-  // coords (col,row) of the brighter "node" dots — purely decorative
-  const nodes = new Set([
-    '3,3', '4,4', '5,3', '6,5', '8,4', '9,3',
-    '11,3', '12,4', '13,3', '15,4', '16,5', '17,4',
-    '5,6', '7,7', '10,6', '14,7', '18,6',
-  ].map((s) => s));
+// Fix Leaflet default marker icons broken by Vite asset bundling
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl:       'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl:     'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
 
-  return (
-    <div className="relative overflow-hidden rounded-2xl border border-[#1e3260]/60 bg-[#0a1330]/60 p-5">
-      <div
-        className="grid"
-        style={{
-          gridTemplateColumns: `repeat(${cols}, 1fr)`,
-          gridTemplateRows: `repeat(${rows}, 1fr)`,
-          aspectRatio: '22 / 9',
-        }}
-      >
-        {Array.from({ length: rows * cols }).map((_, i) => {
-          const c = i % cols;
-          const r = Math.floor(i / cols);
-          const isNode = nodes.has(`${c},${r}`);
-          return (
-            <span
-              key={i}
-              className={`justify-self-center self-center rounded-full ${
-                isNode
-                  ? 'h-[4px] w-[4px] bg-[#5fa5ff] shadow-[0_0_6px_rgba(95,165,255,0.9)]'
-                  : 'h-[2px] w-[2px] bg-[#2a3e6e]'
-              }`}
-            />
-          );
-        })}
-      </div>
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(63,159,255,0.18),transparent_70%)]" />
-    </div>
-  );
-}
+const MHOW = [22.5565, 75.7610];
 
 // ─── Individual form field — label + input/textarea ───
-function Field({ label, type = 'text', placeholder, rows, colSpan = 1 }) {
+function Field({ label, type = 'text', placeholder, rows, colSpan = 1, grow = false }) {
   const span = colSpan === 2 ? 'md:col-span-2' : '';
   const base =
-    'w-full rounded-xl border border-[#1e3260]/70 bg-[#0a1330]/80 px-4 py-3 text-[14px] text-white placeholder:text-[#6f85a8] outline-none transition focus:border-[#3f6bd4] focus:bg-[#0c1735]/90 focus:shadow-[0_0_0_3px_rgba(63,107,212,0.18)]';
+    'w-full rounded-xl border border-[#1a2d55]/80 bg-[#0a1428] px-4 py-3 text-[14px] text-white placeholder:text-[#4a6080] outline-none transition focus:border-[#3f6bd4] focus:shadow-[0_0_0_3px_rgba(63,107,212,0.18)]';
   return (
-    <label className={`flex flex-col gap-2 ${span}`}>
+    <label className={`flex flex-col gap-2 ${span} ${grow ? 'flex-1' : ''}`}>
       <span className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-[#7aa6e5]">
         {label}
       </span>
       {rows ? (
-        <textarea rows={rows} placeholder={placeholder} className={`${base} resize-none`} />
+        <textarea
+          rows={rows}
+          placeholder={placeholder}
+          className={`${base} resize-none ${grow ? 'flex-1' : ''}`}
+        />
       ) : (
         <input type={type} placeholder={placeholder} className={base} />
       )}
@@ -117,17 +90,16 @@ export default function ContactSection() {
         </div>
 
         {/* ══════════ Bottom: Connect + form ══════════ */}
-        <div className="mt-16 grid items-start gap-10 lg:grid-cols-[1fr_1.15fr]">
+        <div className="mt-16 grid items-stretch gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
           {/* Left column: copy + channels + dotted map */}
-          <div>
+          <div className="flex flex-col">
             <h3 className="font-display text-[36px] font-semibold leading-[1.1] text-white md:text-[44px]">
-              Let’s Connect{' '}
-              <span className="italic gradient-text-blue">And</span>
-              <br className="hidden md:block" />
-              {' '}Build Together
+              Let&apos;s Connect <span className="italic gradient-text-blue">And</span>
+              <br />
+              Build Together
             </h3>
 
-            <p className="mt-5 max-w-[420px] text-[14px] leading-7 text-[#a6b9d6]">
+            <p className="mt-5 text-[14px] leading-7 text-[#a6b9d6]">
               Be part of the change. Contact us to collaborate, contribute, or
               support our mission. Together, we can build impactful solutions
               and drive meaningful progress through innovation and knowledge.
@@ -137,36 +109,50 @@ export default function ContactSection() {
               <ChannelRow
                 icon={Mail}
                 label="Email"
-                value="targetkumph@gmail.com"
-                href="mailto:targetkumph@gmail.com"
+                value="hello@ambedkargpt.in"
+                href="mailto:hello@ambedkargpt.in"
               />
               <ChannelRow
                 icon={MapPin}
                 label="Location"
-                value="Sector 7, Digital District, New Tokyo"
+                value="Mhow (Dr. Ambedkar Nagar), Madhya Pradesh, India"
                 href="#"
               />
             </div>
 
-            <div className="mt-7">
-              <WorldMapCard />
+            <div className="mt-7 overflow-hidden rounded-2xl border border-[#1e3260]/60" style={{ height: 220 }}>
+              <MapContainer
+                center={MHOW}
+                zoom={13}
+                scrollWheelZoom={false}
+                zoomControl={false}
+                style={{ height: '100%', width: '100%' }}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <Marker position={MHOW}>
+                  <Popup>Birthplace of Dr. B.R. Ambedkar<br />Mhow, Madhya Pradesh</Popup>
+                </Marker>
+              </MapContainer>
             </div>
           </div>
 
           {/* Right column: Transmission form */}
           <form
             onSubmit={(e) => e.preventDefault()}
-            className="glass-card relative overflow-hidden p-6 md:p-8"
+            className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#1e3260]/60 bg-[#070f24] p-6 md:p-8"
           >
-            <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-[#3f9fff]/15 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-[#7b5cff]/10 blur-3xl" />
+            <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-[#3f9fff]/10 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-[#7b5cff]/8 blur-3xl" />
 
-            <div className="grid gap-5 md:grid-cols-2">
-              <Field label="Full Identity"             placeholder="Jane Doe" />
-              <Field label="Email"                      type="email" placeholder="you@example.com" />
-              <Field label="Physical Origin (Address)"  placeholder="123 Main St, City, Country" colSpan={2} />
-              <Field label="Frequency (Phone)"          type="tel"  placeholder="+91 90000 00000"        colSpan={2} />
-              <Field label="Transmission Message"       rows={5}    placeholder="Tell us what you need…" colSpan={2} />
+            <div className="grid flex-1 gap-4 md:grid-cols-2">
+              <Field label="Full Identity"            placeholder="Jane Doe" />
+              <Field label="Email"                    type="email" placeholder="you@example.com" />
+              <Field label="Physical Origin (Address)" placeholder="123 Main St, City, Country" colSpan={2} />
+              <Field label="Frequency (Phone)"        type="tel"   placeholder="+91 90000 00000"        colSpan={2} />
+              <Field label="Transmission Message"     rows={5}     placeholder="Tell us what you need…" colSpan={2} grow />
             </div>
 
             <button

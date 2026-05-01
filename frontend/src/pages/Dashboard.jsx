@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ImageIcon, Bookmark, Clock, LogOut } from 'lucide-react';
+import { FileText, Send, SlidersHorizontal, LogOut } from 'lucide-react';
 
 import { useAuth } from '../context/AuthContext';
+import { getPosts } from '../api/posts';
+import { getProfileAnswers } from '../api/profile';
 
 import Sidebar              from '../components/dashboard/Sidebar';
 import Topbar               from '../components/dashboard/Topbar';
@@ -23,45 +25,53 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [active, setActive] = useState('dashboard');
 
+  const [posts,            setPosts]           = useState([]);
+  const [profileAnswers,   setProfileAnswers]  = useState([]);
+  const [dataLoading,      setDataLoading]     = useState(true);
+
+  useEffect(() => {
+    if (!currentUser?.id) return;
+    Promise.all([
+      getPosts({ limit: 100 }).catch(() => []),
+      getProfileAnswers(currentUser.id).catch(() => []),
+    ]).then(([p, a]) => {
+      setPosts(p ?? []);
+      setProfileAnswers(a ?? []);
+    }).finally(() => setDataLoading(false));
+  }, [currentUser?.id]);
+
   async function handleLogout() {
     await logout();
     navigate('/login', { replace: true });
   }
 
-  // Derive a sensible display profile from the authenticated Firebase user,
-  // with gentle fallbacks to the mock "Alex Morgan" shown in the mockup.
-  const displayName =
-    currentUser?.displayName?.trim() ||
-    (currentUser?.email ? currentUser.email.split('@')[0] : null) ||
-    'Alex Morgan';
-
-  const displayEmail = currentUser?.email ?? 'alex.morgan@example.com';
+  const displayName  = currentUser?.username ?? '—';
+  const displayEmail = currentUser?.email ?? currentUser?.phone ?? '—';
   const joinedLabel  = (() => {
-    const t = currentUser?.metadata?.creationTime;
-    if (!t) return 'Joined March 2024';
+    const t = currentUser?.created_at;
+    if (!t) return '';
     const d = new Date(t);
     return `Joined ${d.toLocaleString('en-US', { month: 'long', year: 'numeric' })}`;
   })();
 
-  const topbarUser  = { name: displayName, tier: 'Premium' };
-  const profileUser = {
-    name:   displayName,
-    email:  displayEmail,
-    joined: joinedLabel,
-    score:  '127',
-  };
+  const totalPosts     = posts.length;
+  const publishedPosts = posts.filter((p) => p.status === 'published').length;
+  const draftPosts     = posts.filter((p) => p.status === 'draft').length;
+  const prefsAnswered  = profileAnswers.length;
 
-  const first = displayName.split(' ')[0];
+  const topbarUser  = { name: displayName };
+  const profileUser = { name: displayName, email: displayEmail, joined: joinedLabel, postCount: totalPosts };
+
+  const first = displayName.split('_')[0];
 
   return (
     <div
-      className="flex min-h-screen text-[#e5e7eb]"
+      className="flex h-screen overflow-hidden text-[#e5e7eb]"
       style={{ background: 'radial-gradient(1200px 700px at 20% 0%, #0d1636 0%, #070b1c 55%, #05081a 100%)' }}
     >
       <Sidebar active={active} onSelect={setActive} />
 
-      <div className="relative flex-1 min-w-0 px-6 md:px-10">
-        {/* ambient glows */}
+      <div className="relative flex-1 min-w-0 overflow-y-auto px-6 md:px-10">
         <div className="pointer-events-none fixed top-0 right-0 h-[420px] w-[420px] rounded-full bg-[#3f9fff]/10 blur-[130px]" />
         <div className="pointer-events-none fixed bottom-0 left-[22%] h-[360px] w-[360px] rounded-full bg-[#7b5cff]/10 blur-[130px]" />
 
@@ -75,7 +85,7 @@ export default function Dashboard() {
               <span className="gradient-text-blue">{first}</span>
             </h1>
             <p className="mt-1.5 text-[13.5px] text-[#8b94b8]">
-              Your AI journey continues. Let's make today productive and insightful!
+              Your AI journey continues. Let&apos;s make today productive and insightful!
             </p>
           </div>
 
@@ -91,70 +101,70 @@ export default function Dashboard() {
         {/* ── Stat cards ── */}
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
-            label="Total Searches"
-            value="1,234"
-            delta="+12.5%"
-            icon={<Search size={15} strokeWidth={2} />}
+            label="Posts Generated"
+            value={dataLoading ? '…' : String(totalPosts)}
+            delta={null}
+            icon={<FileText size={15} strokeWidth={2} />}
             iconGradient="bg-gradient-to-br from-[#3f9fff] to-[#2664d6]"
           />
           <StatCard
-            label="Images Generated"
-            value="1,248"
-            delta="+8.3%"
-            icon={<ImageIcon size={15} strokeWidth={2} />}
+            label="Published Posts"
+            value={dataLoading ? '…' : String(publishedPosts)}
+            delta={null}
+            icon={<Send size={15} strokeWidth={2} />}
             iconGradient="bg-gradient-to-br from-[#a855f7] to-[#7b3fd4]"
           />
           <StatCard
-            label="Saved Prompts"
-            value="87"
-            delta="+15.2%"
-            icon={<Bookmark size={15} strokeWidth={2} />}
+            label="Draft Posts"
+            value={dataLoading ? '…' : String(draftPosts)}
+            delta={null}
+            icon={<FileText size={15} strokeWidth={2} />}
             iconGradient="bg-gradient-to-br from-[#22c55e] to-[#16a34a]"
           />
           <StatCard
-            label="Hours on Platform"
-            value="142"
-            delta="+5.7%"
-            icon={<Clock size={15} strokeWidth={2} />}
+            label="Preferences Set"
+            value={dataLoading ? '…' : String(prefsAnswered)}
+            delta={null}
+            icon={<SlidersHorizontal size={15} strokeWidth={2} />}
             iconGradient="bg-gradient-to-br from-[#ffb056] to-[#ff7a2d]"
           />
         </div>
 
         {/* ── Charts row ── */}
         <div className="mt-5 grid gap-5 grid-cols-1 lg:grid-cols-2">
-          <SearchActivityChart />
-          <DailyActivityChart />
+          <SearchActivityChart posts={posts} />
+          <DailyActivityChart posts={posts} />
         </div>
 
         {/* ── Categories pie + image generation ── */}
         <div className="mt-5 grid gap-5 grid-cols-1 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <CategoriesPieChart />
+            <CategoriesPieChart posts={posts} />
           </div>
-          <ImageGenerationCard />
+          <ImageGenerationCard postCount={totalPosts} />
         </div>
 
         {/* ── Profile + Preferences ── */}
         <div className="mt-5 grid gap-5 grid-cols-1 lg:grid-cols-3">
           <ProfileCard user={profileUser} />
           <div className="lg:col-span-2">
-            <PreferencesCard />
+            <PreferencesCard answers={profileAnswers} />
           </div>
         </div>
 
-        {/* ── Recent searches ── */}
+        {/* ── Recent posts ── */}
         <div className="mt-5">
-          <RecentSearchesTable />
+          <RecentSearchesTable posts={posts} loading={dataLoading} />
         </div>
 
-        {/* ── Saved prompts ── */}
+        {/* ── Published posts ── */}
         <div className="mt-5">
-          <SavedPromptsGrid />
+          <SavedPromptsGrid posts={posts.filter((p) => p.status === 'published')} />
         </div>
 
         {/* ── Achievements ── */}
         <div className="mt-5">
-          <AchievementsGrid />
+          <AchievementsGrid totalPosts={totalPosts} prefsAnswered={prefsAnswered} />
         </div>
 
         <DashboardFooter />

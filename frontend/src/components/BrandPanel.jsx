@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import ImagePlaceholder from './ImagePlaceholder';
 
 // eager-load image assets so the build bundles them
@@ -31,13 +32,13 @@ function LogoMark({ size = 44 }) {
 
 function BrandLogo() {
   return (
-    <div className="flex items-center gap-2.5">
+    <Link to="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-85">
       <LogoMark />
       <span className="text-[26px] font-semibold leading-none tracking-tight md:text-[30px]">
         <span className="text-white">Ambedkar</span>
         <span className="ml-1 gradient-text-cyan">GPT</span>
       </span>
-    </div>
+    </Link>
   );
 }
 

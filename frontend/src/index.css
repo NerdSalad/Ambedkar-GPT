@@ -41,6 +41,18 @@
 
 * { box-sizing: border-box; }
 
+/* Prevent Tailwind's img reset from breaking Leaflet map tiles */
+.leaflet-container img.leaflet-tile,
+.leaflet-container img {
+  max-width: none !important;
+  max-height: none !important;
+  width: auto;
+  height: auto;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: #05081a;
@@ -389,6 +401,11 @@ html { scroll-behavior: smooth; }
   to   { transform: translateX(-50%); }
 }
 
+@keyframes makerJumpIn {
+  from { transform: translateX(48px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
 /* --- Custom cursor --- */
 .custom-cursor {
   position: fixed;
@@ -449,16 +466,13 @@ html { scroll-behavior: smooth; }
   35%  { opacity: 1; }
   100% { opacity: 0; }
 }
-@keyframes curtainEnter {
-  0%   { opacity: 0; }
-  100% { opacity: 1; }
-}
 .curtain-reveal {
   animation: curtainReveal 900ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
   pointer-events: none;
 }
 .curtain-enter {
-  animation: curtainEnter 200ms ease-out forwards;
+  /* instant — no fade-in so destination page is never visible */
+  opacity: 1;
 }
 
 /* --- Opening splash --- */

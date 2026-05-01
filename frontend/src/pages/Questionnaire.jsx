@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCurtain } from '../context/CurtainContext';
 import { ArrowLeft, ArrowRight, BookmarkCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { saveProfileAnswers } from '../api/profile';
 import logoSrc     from '../assets/images/logo-animation.png';
 import ambedkarSrc from '../assets/images/qna-ambedkar.png';
 
@@ -46,20 +48,22 @@ const QUESTIONS = [
 const STORAGE_KEY = 'ambedkargpt_questionnaire';
 
 function useSlideAnim(index, direction) {
-  const [display, setDisplay] = useState(index);
-  const [animate, setAnimate] = useState('idle');
+  const [display, setDisplay]   = useState(index);
+  const [animate, setAnimate]   = useState('idle');
+  const [animating, setAnimating] = useState(false);
 
   useEffect(() => {
     if (index === display) return;
     const exitClass  = direction === 'next' ? 'exit-left'  : 'exit-right';
     const enterClass = direction === 'next' ? 'enter-right' : 'enter-left';
+    setAnimating(true);
     setAnimate(exitClass);
     const t1 = setTimeout(() => { setDisplay(index); setAnimate(enterClass); }, 350);
-    const t2 = setTimeout(() => setAnimate('idle'), 700);
+    const t2 = setTimeout(() => { setAnimate('idle'); setAnimating(false); }, 700);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return { display, animate };
+  return { display, animate, animating };
 }
 
 const ANIM_STYLES = {
@@ -72,6 +76,7 @@ const ANIM_STYLES = {
 
 export default function Questionnaire() {
   const navigate = useNavigate();
+  const { go: curtainGo } = useCurtain();
   const { currentUser } = useAuth();
 
   const saved = (() => {
@@ -81,7 +86,7 @@ export default function Questionnaire() {
   const [step, setStep]       = useState(saved.step ?? 0);
   const [answers, setAnswers] = useState(saved.answers ?? {});
   const [direction, setDir]   = useState('next');
-  const { display, animate }  = useSlideAnim(step, direction);
+  const { display, animate, animating } = useSlideAnim(step, direction);
 
   const total    = QUESTIONS.length;
   const question = QUESTIONS[display];
@@ -98,14 +103,14 @@ export default function Questionnaire() {
   }
 
   function goNext() {
-    if (!selected) return;
+    if (!selected || animating) return;
     if (isLast) { finish(); return; }
     setDir('next');
     setStep((s) => s + 1);
   }
 
   function goBack() {
-    if (step === 0) return;
+    if (step === 0 || animating) return;
     setDir('back');
     setStep((s) => s - 1);
   }
@@ -117,7 +122,11 @@ export default function Questionnaire() {
 
   function finish() {
     localStorage.removeItem(STORAGE_KEY);
-    navigate('/dashboard', { replace: true });
+    // Save answers to backend; fire-and-forget so the user isn't blocked
+    if (currentUser?.id) {
+      saveProfileAnswers(currentUser.id, answers).catch(() => {});
+    }
+    curtainGo('/dashboard', { replace: true });
   }
 
   return (
@@ -225,7 +234,7 @@ export default function Questionnaire() {
           <button
             type="button"
             onClick={goBack}
-            disabled={step === 0}
+            disabled={step === 0 || animating}
             className="inline-flex h-10 items-center gap-2 rounded-full border border-[#1e3260]/70 px-5 text-[13px] font-medium text-[#6b80a8] transition-all hover:border-[#3a6bc4]/60 hover:text-white disabled:pointer-events-none disabled:opacity-25"
           >
             <ArrowLeft size={14} strokeWidth={2} />
@@ -244,7 +253,7 @@ export default function Questionnaire() {
           <button
             type="button"
             onClick={goNext}
-            disabled={!selected}
+            disabled={!selected || animating}
             className="inline-flex h-10 items-center gap-2 rounded-full px-6 text-[13px] font-semibold text-white transition-all duration-200 hover:brightness-110 disabled:pointer-events-none disabled:opacity-35"
             style={{
               background: selected ? 'linear-gradient(90deg,#0a7dff,#3a9fff)' : 'rgba(30,50,100,0.4)',
